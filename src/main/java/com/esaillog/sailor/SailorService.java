@@ -1,5 +1,6 @@
 package com.esaillog.sailor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,14 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SailorService {
 
-    private List<Sailor> sailors;
-
-    public SailorService() {
-        this.sailors = List.of(
-                new Sailor(UUID.fromString("0442949d-7db8-4a70-a167-e7c258d7692a"), "John", "Doe", "jon@sailor.com"),
-                new Sailor(UUID.fromString("970dff9a-c407-4d90-8ba4-14f6a10207ac"), "Jane", "Doe", "jane@sailor.com"),
-                new Sailor(UUID.fromString("c8b6ca8d-0731-42e6-81ab-85eae0014364"), "Jack", "Doe", "jack@sailor.com"));
-    }
+    private List<Sailor> sailors = new ArrayList<>();
 
     public List<Sailor> getSailors() {
         return sailors;
@@ -29,6 +23,7 @@ public class SailorService {
     }
 
     public void addSailor(Sailor sailor) {
+        sailor.setId(UUID.randomUUID());
         sailors.add(sailor);
     }
 
