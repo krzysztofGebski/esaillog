@@ -12,7 +12,7 @@ POST http://localhost:8080/sailors
 Content-Type: application/json
 
 {
-  "firstName": "Rick",
+  "firstName": "Jack",
   "lastName": "Doe",
-  "email": "rick@sailor.com"
+  "email": "jack@sailor.com"
 }

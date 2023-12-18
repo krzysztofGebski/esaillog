@@ -1,34 +1,33 @@
 package com.esaillog.sailor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class SailorService {
 
-    private List<Sailor> sailors = new ArrayList<>();
+    private final SailorRepository sailorRepository;
+
 
     public List<Sailor> getSailors() {
-        return sailors;
+        return sailorRepository.findAll();
     }
 
     public Sailor getSailor(UUID uuid) {
-        return sailors.stream()
-                .filter(sailor -> sailor.getId().equals(uuid))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Sailor " + uuid + " does not exist"));
+        return sailorRepository.findById(uuid).orElseThrow();
     }
 
     public void addSailor(Sailor sailor) {
-        sailor.setId(UUID.randomUUID());
-        sailors.add(sailor);
+        sailorRepository.save(sailor);
     }
 
     public void deleteSailor(UUID uuid) {
-        sailors.removeIf(sailor -> sailor.getId().equals(uuid));
+        sailorRepository.deleteById(uuid);
     }
 
     public void updateSailor(UUID uuid, Sailor sailor) {
