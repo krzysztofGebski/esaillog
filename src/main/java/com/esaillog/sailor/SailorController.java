@@ -25,24 +25,24 @@ public class SailorController {
 
 
     @GetMapping
-    public ResponseEntity<List<Sailor>> getSailors() {
-        return ResponseEntity.ok(sailorService.getSailors());
+    public ResponseEntity<List<SailorDTO>> getSailors() {
+        return ResponseEntity.ok(sailorService.getSailors().stream().map(SailorMapper::toSailorDTO).toList());
     }
 
     @GetMapping("{uuid}")
-    public ResponseEntity<Sailor> getSailor(@PathVariable String uuid) {
-        return ResponseEntity.ok(sailorService.getSailor(UUID.fromString(uuid)));
+    public ResponseEntity<SailorDTO> getSailor(@PathVariable String uuid) {
+        return ResponseEntity.ok(SailorMapper.toSailorDTO(sailorService.getSailor(UUID.fromString(uuid))));
     }
 
     @PostMapping
-    public ResponseEntity<Void> addSailor(@RequestBody Sailor sailor) {
-        sailorService.addSailor(sailor);
+    public ResponseEntity<Void> addSailor(@RequestBody SailorDTO sailorDTO) {
+        sailorService.addSailor(SailorMapper.toSailor(sailorDTO));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("{uuid}")
-    public ResponseEntity<Void> updateSailor(@PathVariable String uuid, @RequestBody Sailor sailor) {
-        sailorService.updateSailor(UUID.fromString(uuid), sailor);
+    public ResponseEntity<Void> updateSailor(@PathVariable String uuid, @RequestBody SailorDTO sailorDTO) {
+        sailorService.updateSailor(UUID.fromString(uuid), SailorMapper.toSailor(sailorDTO));
         return ResponseEntity.ok().build();
     }
 
