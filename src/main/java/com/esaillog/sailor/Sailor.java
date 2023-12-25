@@ -1,6 +1,6 @@
 package com.esaillog.sailor;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import com.esaillog.training.Training;
@@ -32,5 +32,5 @@ public class Sailor {
         joinColumns = @JoinColumn(name = "sailor_id"),
         inverseJoinColumns = @JoinColumn(name = "training_id")
     )
-    private Set<Training> trainings;
+    private List<Training> trainings;
 }

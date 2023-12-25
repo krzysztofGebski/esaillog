@@ -25,6 +25,7 @@ public class Training {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
+    private String name;
     @Enumerated(EnumType.STRING)
     private TrainingType type;
     private boolean hasCertificate;

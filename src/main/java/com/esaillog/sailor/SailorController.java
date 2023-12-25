@@ -21,34 +21,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SailorController {
 
-    private final SailorService sailorService;
-
+    private final SailorMapper sailorMapper;
 
     @GetMapping
     public ResponseEntity<List<SailorDTO>> getSailors() {
-        return ResponseEntity.ok(sailorService.getSailors().stream().map(SailorMapper::toSailorDTO).toList());
+        return ResponseEntity.ok(sailorMapper.getSailors());
     }
 
     @GetMapping("{uuid}")
     public ResponseEntity<SailorDTO> getSailor(@PathVariable String uuid) {
-        return ResponseEntity.ok(SailorMapper.toSailorDTO(sailorService.getSailor(UUID.fromString(uuid))));
+        return ResponseEntity.ok(sailorMapper.getSailor(UUID.fromString(uuid)));
     }
 
     @PostMapping
     public ResponseEntity<Void> addSailor(@RequestBody SailorDTO sailorDTO) {
-        sailorService.addSailor(SailorMapper.toSailor(sailorDTO));
+        sailorMapper.addSailor(sailorDTO);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("{uuid}")
     public ResponseEntity<Void> updateSailor(@PathVariable String uuid, @RequestBody SailorDTO sailorDTO) {
-        sailorService.updateSailor(UUID.fromString(uuid), SailorMapper.toSailor(sailorDTO));
+        sailorMapper.updateSailor(UUID.fromString(uuid), sailorDTO);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("{uuid}")
     public ResponseEntity<Void> deleteSailor(@PathVariable String uuid) {
-        sailorService.deleteSailor(UUID.fromString(uuid));
+        sailorMapper.deleteSailor(UUID.fromString(uuid));
         return ResponseEntity.noContent().build();
     }
 
