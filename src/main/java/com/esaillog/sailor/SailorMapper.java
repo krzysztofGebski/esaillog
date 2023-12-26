@@ -26,8 +26,8 @@ public class SailorMapper {
                              sailor.getTrainings().stream().map(training -> training.getId().toString()).toList());
     }
 
-    public SailorDTO getSailor(UUID id) {
-        return toSailorDTO(sailorService.getSailor(id));
+    public SailorDTO getSailor(String uuid) {
+        return toSailorDTO(sailorService.getSailor(UUID.fromString(uuid)));
     }
 
     public void addSailor(SailorDTO sailorDTO) {
@@ -44,11 +44,11 @@ public class SailorMapper {
         return sailor;
     }
 
-    public void updateSailor(UUID id, SailorDTO sailorDTO) {
-        sailorService.updateSailor(id, toSailor(sailorDTO));
+    public void updateSailor(String uuid, SailorDTO sailorDTO) {
+        sailorService.updateSailor(UUID.fromString(uuid), toSailor(sailorDTO));
     }
 
-    public void deleteSailor(UUID id) {
-        sailorService.deleteSailor(id);
+    public void deleteSailor(String uuid) {
+        sailorService.deleteSailor(UUID.fromString(uuid));
     }
 }
