@@ -31,7 +31,7 @@ public class SailorController {
      * @return a {@link ResponseEntity} containing the sailor DTO
      */
     @GetMapping("{uuid}")
-    public ResponseEntity<SailorDTO> retrieveSailorByUUID(@PathVariable String uuid) {
+    public ResponseEntity<SailorDTO> retrieveSailorByUUID(@PathVariable String uuid) throws SailorNotFoundException {
         return ResponseEntity.ok(sailorService.getSailor(uuid));
     }
 
@@ -56,7 +56,7 @@ public class SailorController {
      * @return a {@link ResponseEntity} with no content if the update was successful
      */
     @PostMapping("{uuid}")
-    public ResponseEntity<Void> updateSailor(@PathVariable String uuid, @RequestBody SailorDTO sailorDTO) {
+    public ResponseEntity<Void> updateSailor(@PathVariable String uuid, @RequestBody SailorDTO sailorDTO) throws SailorNotFoundException {
         sailorService.updateSailor(uuid, sailorDTO);
         return ResponseEntity.ok().build();
     }
@@ -68,7 +68,7 @@ public class SailorController {
      * @return a {@link ResponseEntity} with no content if the deletion was successful
      */
     @DeleteMapping("{uuid}")
-    public ResponseEntity<Void> deleteSailor(@PathVariable String uuid) {
+    public ResponseEntity<Void> deleteSailor(@PathVariable String uuid) throws SailorNotFoundException {
         sailorService.deleteSailor(uuid);
         return ResponseEntity.noContent().build();
     }

@@ -31,7 +31,7 @@ public class TrainingController {
      * @return a {@link ResponseEntity} containing the TrainingDTO
      */
     @GetMapping("{uuid}")
-    public ResponseEntity<TrainingDTO> retrieveTrainingByUUID(@PathVariable String uuid) {
+    public ResponseEntity<TrainingDTO> retrieveTrainingByUUID(@PathVariable String uuid) throws TrainingNotFoundException {
         return ResponseEntity.ok(trainingService.getTraining(uuid));
     }
 
@@ -56,7 +56,7 @@ public class TrainingController {
      * @return a {@link ResponseEntity} with no content if the update was successful.
      */
     @PostMapping("{uuid}")
-    public ResponseEntity<Void> updateTraining(@PathVariable String uuid, @RequestBody TrainingDTO trainingDTO) {
+    public ResponseEntity<Void> updateTraining(@PathVariable String uuid, @RequestBody TrainingDTO trainingDTO) throws TrainingNotFoundException {
         trainingService.updateTraining(uuid, trainingDTO);
         return ResponseEntity.ok().build();
     }
@@ -68,7 +68,7 @@ public class TrainingController {
      * @return a {@link ResponseEntity} with no content if the deletion was successful.
      */
     @DeleteMapping("{uuid}")
-    public ResponseEntity<Void> deleteTraining(@PathVariable String uuid) {
+    public ResponseEntity<Void> deleteTraining(@PathVariable String uuid) throws TrainingNotFoundException {
         trainingService.deleteTraining(uuid);
         return ResponseEntity.noContent().build();
     }
