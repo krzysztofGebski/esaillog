@@ -1,11 +1,10 @@
 package com.esaillog.training;
 
-import java.util.List;
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -14,10 +13,6 @@ public class TrainingService {
 
     public List<Training> getTrainings() {
         return trainingRepository.findAll();
-    }
-
-    public Training getTraining(UUID uuid) {
-        return trainingRepository.findById(uuid).orElseThrow();
     }
 
     public void addTraining(Training training) {
@@ -34,6 +29,10 @@ public class TrainingService {
         trainingToUpdate.setHasCertificate(training.isHasCertificate());
         trainingToUpdate.setStartDate(training.getStartDate());
         trainingToUpdate.setEndDate(training.getEndDate());
+    }
+
+    public Training getTraining(UUID uuid) {
+        return trainingRepository.findById(uuid).orElseThrow();
     }
 
 }
