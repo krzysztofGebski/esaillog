@@ -24,7 +24,8 @@ public class TrainingService {
     }
 
     public TrainingDTO getTraining(String uuid) throws TrainingNotFoundException {
-        return trainingRepository.findById(UUID.fromString(uuid)).map(TrainingMapper::toDto).orElseThrow(TrainingNotFoundException::new);
+        UUID id = UUID.fromString(uuid);
+        return trainingRepository.findById(id).map(TrainingMapper::toDto).orElseThrow(() -> new TrainingNotFoundException(uuid));
     }
 
     public void addTraining(TrainingDTO trainingDTO) {
@@ -32,18 +33,22 @@ public class TrainingService {
     }
 
     private List<Sailor> fetchSailorsByTrainingDTO(TrainingDTO trainingDTO) {
-        return trainingDTO.sailors().stream().map(sailorId -> {
-            try {
-                return sailorRepository.findById(UUID.fromString(sailorId)).orElseThrow(SailorNotFoundException::new);
-            } catch (SailorNotFoundException e) {
-                log.warn(e.getMessage());
-                return null;
-            }
-        }).filter(Objects::nonNull).toList();
+        return trainingDTO.sailors().stream().map(this::findSailorById).filter(Objects::nonNull).toList();
+    }
+
+    private Sailor findSailorById(String sailorId) {
+        try {
+            UUID id = UUID.fromString(sailorId);
+            return sailorRepository.findById(id).orElseThrow(() -> new SailorNotFoundException(sailorId));
+        } catch (SailorNotFoundException e) {
+            log.warn(e.getMessage());
+            return null;
+        }
     }
 
     public void updateTraining(String uuid, TrainingDTO trainingDTO) throws TrainingNotFoundException {
-        Training training = trainingRepository.findById(UUID.fromString(uuid)).orElseThrow(TrainingNotFoundException::new);
+        UUID id = UUID.fromString(uuid);
+        Training training = trainingRepository.findById(id).orElseThrow(() -> new TrainingNotFoundException(uuid));
         training.setName(trainingDTO.name());
         training.setType(trainingDTO.type());
         training.setHasCertificate(trainingDTO.hasCertificate());
@@ -53,10 +58,11 @@ public class TrainingService {
     }
 
     public void deleteTraining(String uuid) throws TrainingNotFoundException {
-        if(trainingRepository.existsById(UUID.fromString(uuid))) {
-            trainingRepository.deleteById(UUID.fromString(uuid));
+        UUID id = UUID.fromString(uuid);
+        if (trainingRepository.existsById(id)) {
+            trainingRepository.deleteById(id);
         } else {
-            throw new TrainingNotFoundException();
+            throw new TrainingNotFoundException(uuid);
         }
     }
 }

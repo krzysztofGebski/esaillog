@@ -24,7 +24,8 @@ public class SailorService {
     }
 
     public SailorDTO getSailor(String uuid) throws SailorNotFoundException {
-        return sailorRepository.findById(UUID.fromString(uuid)).map(SailorMapper::toDto).orElseThrow(SailorNotFoundException::new);
+        UUID id = UUID.fromString(uuid);
+        return sailorRepository.findById(id).map(SailorMapper::toDto).orElseThrow(() -> new SailorNotFoundException(uuid));
     }
 
     public void addSailor(SailorDTO sailorDTO) {
@@ -32,15 +33,13 @@ public class SailorService {
     }
 
     private List<Training> fetchTrainingsBySailorDTO(SailorDTO sailorDTO) {
-        return sailorDTO.trainings().stream()
-                        .map(this::findTrainingById)
-                        .filter(Objects::nonNull)
-                        .toList();
+        return sailorDTO.trainings().stream().map(this::findTrainingById).filter(Objects::nonNull).toList();
     }
 
     private Training findTrainingById(String trainingId) {
         try {
-            return trainingRepository.findById(UUID.fromString(trainingId)).orElseThrow(TrainingNotFoundException::new);
+            UUID id = UUID.fromString(trainingId);
+            return trainingRepository.findById(id).orElseThrow(() -> new TrainingNotFoundException(trainingId));
         } catch (TrainingNotFoundException e) {
             log.warn(e.getMessage());
             return null;
@@ -48,7 +47,8 @@ public class SailorService {
     }
 
     public void updateSailor(String uuid, SailorDTO sailorDTO) throws SailorNotFoundException {
-        Sailor sailor = sailorRepository.findById(UUID.fromString(uuid)).orElseThrow(SailorNotFoundException::new);
+        UUID id = UUID.fromString(uuid);
+        Sailor sailor = sailorRepository.findById(id).orElseThrow(() -> new SailorNotFoundException(uuid));
         sailor.setFirstName(sailorDTO.firstName());
         sailor.setLastName(sailorDTO.lastName());
         sailor.setEmail(sailorDTO.email());
@@ -56,10 +56,11 @@ public class SailorService {
     }
 
     public void deleteSailor(String uuid) throws SailorNotFoundException {
-        if (sailorRepository.existsById(UUID.fromString(uuid))) {
-            sailorRepository.deleteById(UUID.fromString(uuid));
+        UUID id = UUID.fromString(uuid);
+        if (sailorRepository.existsById(id)) {
+            sailorRepository.deleteById(id);
         } else {
-            throw new SailorNotFoundException();
+            throw new SailorNotFoundException(uuid);
         }
     }
 }
