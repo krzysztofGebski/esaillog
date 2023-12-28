@@ -1,5 +1,6 @@
 package com.esaillog.sailor;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class SailorController {
      * @return a {@link ResponseEntity} with no content if the sailor was successfully added.
      */
     @PostMapping
-    public ResponseEntity<Void> addSailor(@RequestBody SailorDTO sailorDTO) {
+    public ResponseEntity<Void> addSailor(@Valid @RequestBody SailorDTO sailorDTO) {
         sailorService.addSailor(sailorDTO);
         return ResponseEntity.ok().build();
     }
@@ -56,7 +57,7 @@ public class SailorController {
      * @return a {@link ResponseEntity} with no content if the update was successful
      */
     @PostMapping("{uuid}")
-    public ResponseEntity<Void> updateSailor(@PathVariable String uuid, @RequestBody SailorDTO sailorDTO) throws SailorNotFoundException {
+    public ResponseEntity<Void> updateSailor(@PathVariable String uuid, @Valid @RequestBody SailorDTO sailorDTO) throws SailorNotFoundException {
         sailorService.updateSailor(uuid, sailorDTO);
         return ResponseEntity.ok().build();
     }
