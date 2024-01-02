@@ -8,7 +8,7 @@ interface SailorMapper {
 
     static Sailor toSailor(SailorDTO sailorDTO, List<Training> trainings) {
         Sailor sailor = new Sailor();
-        sailor.setId(UUID.fromString(sailorDTO.id()));
+        sailor.setId(sailorDTO.id() != null ? UUID.fromString(sailorDTO.id()) : UUID.randomUUID());
         sailor.setFirstName(sailorDTO.firstName());
         sailor.setLastName(sailorDTO.lastName());
         sailor.setEmail(sailorDTO.email());

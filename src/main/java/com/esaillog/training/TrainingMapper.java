@@ -10,7 +10,7 @@ interface TrainingMapper {
 
     static Training toTraining(TrainingDTO trainingDTO, List<Sailor> sailors) {
         Training training = new Training();
-        training.setId(UUID.fromString(trainingDTO.id()));
+        training.setId(trainingDTO.id() != null ? UUID.fromString(trainingDTO.id()) : UUID.randomUUID());
         training.setName(trainingDTO.name());
         training.setType(trainingDTO.type());
         training.setHasCertificate(trainingDTO.hasCertificate());

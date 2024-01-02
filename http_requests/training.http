@@ -1,0 +1,39 @@
+###
+# Get all trainings
+GET http://localhost:8080/trainings
+
+###
+# Get a specific training
+GET http://localhost:8080/trainings/adce0670-458c-4f79-a775-c98b99d612a6
+
+###
+# Create a new training
+POST http://localhost:8080/trainings
+Content-Type: application/json
+
+{
+  "name": "Sailor certificate",
+  "type": "SAILOR",
+  "hasCertificate": true,
+  "startDate": "2023-11-05",
+  "endDate": "2023-11-07",
+  "sailors": []
+}
+
+###
+# update a new training
+POST http://localhost:8080/trainings/554a34ed-cb51-4234-a5fc-9e81a9d4fb7e
+Content-Type: application/json
+
+{
+  "name": "Sailor certificate",
+  "type": "SAILOR",
+  "hasCertificate": true,
+  "startDate": "",
+  "endDate": "",
+  "sailors": []
+}
+
+###
+# Delete a training
+DELETE http://localhost:8080/trainings/55a9c5eb-2703-4102-ab76-bd4b521a8cbe

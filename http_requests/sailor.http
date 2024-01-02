@@ -1,0 +1,33 @@
+###
+# Get all sailors
+GET http://localhost:8080/sailors
+
+###
+# Get a specific sailor
+GET http://localhost:8080/sailors/adce0670-458c-4f79-a775-c98b99d612a6
+
+###
+# Create a new sailor
+POST http://localhost:8080/sailors
+Content-Type: application/json
+
+{
+  "firstName": "Jack",
+  "lastName": "Doe",
+  "email": "jack@sailor.com"
+}
+
+###
+# update a new sailor
+POST http://localhost:8080/sailors/554a34ed-cb51-4234-a5fc-9e81a9d4fb7e
+Content-Type: application/json
+
+{
+  "firstName": "Jacksssee",
+  "lastName": "Doe",
+  "email": "jack@sailor.com"
+}
+
+###
+# Delete a sailor
+DELETE http://localhost:8080/sailors/55a9c5eb-2703-4102-ab76-bd4b521a8cbe
