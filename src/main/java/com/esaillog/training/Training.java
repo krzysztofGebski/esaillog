@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +25,6 @@ public class Training {
     private boolean hasCertificate;
     private LocalDate startDate;
     private LocalDate endDate;
-    @ManyToMany(mappedBy = "trainings", cascade = {CascadeType.REMOVE})
-    private List<Sailor> sailors;
+    @ManyToMany(mappedBy = "trainings", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Sailor> sailors = new HashSet<>();
 }
