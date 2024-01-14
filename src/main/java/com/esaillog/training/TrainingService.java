@@ -10,8 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -36,8 +37,8 @@ public class TrainingService {
         trainingRepository.save(TrainingMapper.toTraining(trainingDTO, fetchSailorsByTrainingDTO(trainingDTO)));
     }
 
-    private List<Sailor> fetchSailorsByTrainingDTO(TrainingDTO trainingDTO) {
-        return trainingDTO.sailors().stream().map(this::findSailorById).filter(Objects::nonNull).toList();
+    private Set<Sailor> fetchSailorsByTrainingDTO(TrainingDTO trainingDTO) {
+        return trainingDTO.sailors().stream().map(this::findSailorById).collect(Collectors.toSet());
     }
 
     private Sailor findSailorById(String sailorId) {

@@ -2,11 +2,11 @@ package com.esaillog.sailor;
 
 import com.esaillog.training.Training;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 interface SailorMapper {
 
-    static Sailor toSailor(SailorDTO sailorDTO, List<Training> trainings) {
+    static Sailor toSailor(SailorDTO sailorDTO, Set<Training> trainings) {
         Sailor sailor = new Sailor();
         sailor.setId(sailorDTO.id() != null ? UUID.fromString(sailorDTO.id()) : UUID.randomUUID());
         sailor.setFirstName(sailorDTO.firstName());

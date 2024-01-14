@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +37,8 @@ public class SailorService {
         sailorRepository.save(SailorMapper.toSailor(sailorDTO, fetchTrainingsBySailorDTO(sailorDTO)));
     }
 
-    private List<Training> fetchTrainingsBySailorDTO(SailorDTO sailorDTO) {
-        return sailorDTO.trainings().stream().map(this::findTrainingById).toList();
+    private Set<Training> fetchTrainingsBySailorDTO(SailorDTO sailorDTO) {
+        return sailorDTO.trainings().stream().map(this::findTrainingById).collect(Collectors.toSet());
     }
 
     private Training findTrainingById(String trainingId) {

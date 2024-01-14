@@ -3,12 +3,12 @@ package com.esaillog.training;
 import com.esaillog.sailor.Sailor;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 interface TrainingMapper {
 
-    static Training toTraining(TrainingDTO trainingDTO, List<Sailor> sailors) {
+    static Training toTraining(TrainingDTO trainingDTO, Set<Sailor> sailors) {
         Training training = new Training();
         training.setId(trainingDTO.id() != null ? UUID.fromString(trainingDTO.id()) : UUID.randomUUID());
         training.setName(trainingDTO.name());

@@ -73,5 +73,4 @@ public class SailorController {
         sailorService.deleteSailor(uuid);
         return ResponseEntity.noContent().build();
     }
-
 }

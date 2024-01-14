@@ -12,5 +12,4 @@ public record SailorDTO(String id, @NotBlank(message = "First name is mandatory"
                         @Email(message = "Email is mandatory") String email,
                         @JsonSetter(nulls = Nulls.AS_EMPTY)
                         List<String> trainings) {
-
 }
