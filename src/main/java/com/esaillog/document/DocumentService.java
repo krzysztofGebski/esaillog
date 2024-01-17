@@ -1,5 +1,6 @@
 package com.esaillog.document;
 
+import com.esaillog.training.TrainingDTO;
 import com.esaillog.training.TrainingService;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
@@ -22,10 +23,14 @@ public class DocumentService {
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         fontTitle.setSize(18);
 
-        Paragraph paragraph = new Paragraph("Welcome", fontTitle);
-        paragraph.setAlignment(Paragraph.ALIGN_CENTER);
+        Paragraph titleParagraph = new Paragraph("Welcome", fontTitle);
+        titleParagraph.setAlignment(Paragraph.ALIGN_CENTER);
 
-        document.add(paragraph);
+        TrainingDTO training = trainingService.getTraining(uuid);
+        Paragraph trainingNameParagraph = new Paragraph("Training Name: " + training.name());
+        document.add(trainingNameParagraph);
+
+        document.add(titleParagraph);
         document.close();
 
     }
