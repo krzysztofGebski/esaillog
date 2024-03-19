@@ -1,5 +1,8 @@
 package com.esaillog.sailor;
 
+import com.esaillog.exam.Exam;
+import com.esaillog.exam.ExamNotFoundException;
+import com.esaillog.exam.ExamRepository;
 import com.esaillog.training.Training;
 import com.esaillog.training.TrainingNotFoundException;
 import com.esaillog.training.TrainingRepository;
@@ -20,6 +23,7 @@ public class SailorService {
 
     private final SailorRepository sailorRepository;
     private final TrainingRepository trainingRepository;
+    private final ExamRepository examRepository;
 
     @Transactional
     public List<SailorDTO> getSailors() {
@@ -34,8 +38,11 @@ public class SailorService {
 
     @Transactional
     public void addSailor(SailorDTO sailorDTO) {
-        sailorRepository.save(SailorMapper.toSailor(sailorDTO, fetchTrainingsBySailorDTO(sailorDTO)));
+        sailorRepository.save(SailorMapper.toSailor(sailorDTO, fetchTrainingsBySailorDTO(sailorDTO),
+                fetchExamsBySailorDTO(sailorDTO)));
     }
+
+
 
     private Set<Training> fetchTrainingsBySailorDTO(SailorDTO sailorDTO) {
         return sailorDTO.trainings().stream().map(this::findTrainingById).collect(Collectors.toSet());
@@ -44,6 +51,15 @@ public class SailorService {
     private Training findTrainingById(String trainingId) {
         UUID id = UUID.fromString(trainingId);
         return trainingRepository.findById(id).orElseThrow(() -> new TrainingNotFoundException(trainingId));
+    }
+
+    private Set<Exam> fetchExamsBySailorDTO(SailorDTO sailorDTO) {
+        return sailorDTO.exams().stream().map(this::findExamById).collect(Collectors.toSet());
+    }
+
+    private Exam findExamById(String examId) {
+        UUID id = UUID.fromString(examId);
+        return examRepository.findById(id).orElseThrow(() -> new ExamNotFoundException(examId));
     }
 
     @Transactional

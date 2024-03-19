@@ -1,4 +1,4 @@
-package com.esaillog.training;
+package com.esaillog.exam;
 
 import com.esaillog.sailor.Sailor;
 import jakarta.persistence.*;
@@ -17,17 +17,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Training {
+public class Exam {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
-    private String number;
     private String name;
-    @Enumerated(EnumType.STRING)
-    private TrainingType type;
-    private boolean hasCertificate;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    @ManyToMany(mappedBy = "trainings", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<Sailor> sailors = new HashSet<>();
+    private String number;
+    private LocalDate date;
+    private ExamType type;
+    @ManyToMany(mappedBy = "exams", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    Set<Sailor> participants = new HashSet<>();
 }

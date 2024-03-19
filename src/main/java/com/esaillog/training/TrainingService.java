@@ -4,7 +4,7 @@ import com.esaillog.sailor.Sailor;
 import com.esaillog.sailor.SailorNotFoundException;
 import com.esaillog.sailor.SailorRepository;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class TrainingService {
     private final TrainingRepository trainingRepository;
@@ -29,7 +29,9 @@ public class TrainingService {
     @Transactional
     public TrainingDTO getTraining(String uuid) {
         UUID id = UUID.fromString(uuid);
-        return trainingRepository.findById(id).map(TrainingMapper::toDto).orElseThrow(() -> new TrainingNotFoundException(uuid));
+        return trainingRepository.findById(id)
+                                 .map(TrainingMapper::toDto)
+                                 .orElseThrow(() -> new TrainingNotFoundException(uuid));
     }
 
     @Transactional

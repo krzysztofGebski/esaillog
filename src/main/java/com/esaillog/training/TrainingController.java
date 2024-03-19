@@ -31,7 +31,8 @@ public class TrainingController {
      * @return a {@link ResponseEntity} containing the TrainingDTO
      */
     @GetMapping("{uuid}")
-    public ResponseEntity<TrainingDTO> retrieveTrainingByUUID(@PathVariable String uuid) throws TrainingNotFoundException {
+    public ResponseEntity<TrainingDTO> retrieveTrainingByUUID(@PathVariable String uuid)
+            throws TrainingNotFoundException {
         return ResponseEntity.ok(trainingService.getTraining(uuid));
     }
 
@@ -39,7 +40,6 @@ public class TrainingController {
      * Adds a training to the system.
      *
      * @param trainingDTO the TrainingDTO object representing the training to be added.
-     *
      * @return a {@link ResponseEntity} with no content if the training was successfully added.
      */
     @PostMapping
@@ -51,12 +51,13 @@ public class TrainingController {
     /**
      * Updates a training with the specified UUID.
      *
-     * @param uuid         the UUID of the training to update.
-     * @param trainingDTO  the updated TrainingDTO object.
+     * @param uuid        the UUID of the training to update.
+     * @param trainingDTO the updated TrainingDTO object.
      * @return a {@link ResponseEntity} with no content if the update was successful.
      */
     @PostMapping("{uuid}")
-    public ResponseEntity<Void> updateTraining(@PathVariable String uuid, @RequestBody TrainingDTO trainingDTO) throws TrainingNotFoundException {
+    public ResponseEntity<Void> updateTraining(@PathVariable String uuid, @RequestBody TrainingDTO trainingDTO)
+            throws TrainingNotFoundException {
         trainingService.updateTraining(uuid, trainingDTO);
         return ResponseEntity.ok().build();
     }

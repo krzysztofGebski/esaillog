@@ -1,7 +1,9 @@
 package com.esaillog.sailor;
 
+import com.esaillog.exam.Exam;
 import com.esaillog.training.Training;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Sailor {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -28,4 +31,11 @@ public class Sailor {
         inverseJoinColumns = @JoinColumn(name = "training_id")
     )
     private Set<Training> trainings = new HashSet<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "sailor_exam",
+            joinColumns = @JoinColumn(name = "sailor_id"),
+            inverseJoinColumns = @JoinColumn(name = "exam_id")
+    )
+    private Set<Exam> exams = new HashSet<>();
 }

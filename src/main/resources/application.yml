@@ -11,3 +11,5 @@ spring:
         hibernate:
             ddl-auto: update
         open-in-view: off
+    liquibase:
+        change-log: classpath:/db/changelog/db.changelog.sql

@@ -12,6 +12,7 @@ interface TrainingMapper {
         Training training = new Training();
         training.setId(trainingDTO.id() != null ? UUID.fromString(trainingDTO.id()) : UUID.randomUUID());
         training.setName(trainingDTO.name());
+        training.setNumber(training.getNumber());
         training.setType(trainingDTO.type());
         training.setHasCertificate(trainingDTO.hasCertificate());
         training.setStartDate(LocalDate.parse(trainingDTO.startDate()));
@@ -24,6 +25,7 @@ interface TrainingMapper {
         return new TrainingDTO(
                 training.getId().toString(),
                 training.getName(),
+                training.getNumber(),
                 training.getType(),
                 training.isHasCertificate(),
                 training.getStartDate().toString(),
