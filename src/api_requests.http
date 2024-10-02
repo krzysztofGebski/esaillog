@@ -1,0 +1,2 @@
+### Get all sailors
+GET http://localhost:8080/sailors
