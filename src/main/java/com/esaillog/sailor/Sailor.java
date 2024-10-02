@@ -1,14 +1,12 @@
 package com.esaillog.sailor;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.UUID;
 
+@Data
 @AllArgsConstructor
-@Getter
-@Setter
 public class Sailor {
     private UUID id;
     private String firstName;
