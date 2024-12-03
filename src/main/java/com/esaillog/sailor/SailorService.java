@@ -16,16 +16,25 @@ public class SailorService {
     }
 
     public Sailor findById(UUID id) {
-        return sailorRepository.findById(id);
+        return sailorRepository.findById(id).orElseThrow();
     }
+
     public Sailor save(Sailor sailor) {
         return sailorRepository.save(sailor);
     }
 
-    public Sailor update(UUID id, Sailor sailor) {
-        return sailorRepository.update(id, sailor);
+    public Sailor update(UUID id, Sailor updatedSailor) {
+        Sailor existingSailor = sailorRepository.findById(id)
+                                                .orElseThrow(() -> new IllegalArgumentException("Sailor not found"));
+
+        existingSailor.setFirstName(updatedSailor.getFirstName());
+        existingSailor.setLastName(updatedSailor.getLastName());
+        existingSailor.setEmail(updatedSailor.getEmail());
+
+        return sailorRepository.save(existingSailor);
     }
+
     public void delete(UUID id) {
-        sailorRepository.delete(id);
+        sailorRepository.deleteById(id);
     }
 }

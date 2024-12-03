@@ -32,11 +32,7 @@ public class SailorController {
 
     @PutMapping("/{id}")
     public SailorDto update(@PathVariable String id, @RequestBody SailorDto sailorDto) {
-        Sailor sailor = sailorService.findById(UUID.fromString(id));
-        sailor.setFirstName(sailorDto.firstName());
-        sailor.setLastName(sailorDto.lastName());
-        sailor.setEmail(sailorDto.email());
-        return sailorMapper.toSailorDto(sailorService.update(UUID.fromString(id), sailor));
+        return sailorMapper.toSailorDto(sailorService.update(UUID.fromString(id), sailorMapper.toSailor(sailorDto)));
     }
 
     @DeleteMapping("/{id}")
