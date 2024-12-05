@@ -1,13 +1,14 @@
 package com.esaillog.sailboat;
 
+import com.esaillog.cruise.Cruise;
 import com.esaillog.port.Port;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -20,8 +21,12 @@ public class Sailboat {
     private String name;
     private String registerNumber;
     private String type;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "port_id")
     private Port homePort;
     private double length;
     private double engineKW;
+    @OneToMany(mappedBy = "sailboat")
+    private Set<Cruise> cruises = new HashSet<>();
+
 }

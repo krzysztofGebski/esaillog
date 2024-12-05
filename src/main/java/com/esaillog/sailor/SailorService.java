@@ -30,6 +30,7 @@ public class SailorService {
         existingSailor.setFirstName(updatedSailor.getFirstName());
         existingSailor.setLastName(updatedSailor.getLastName());
         existingSailor.setEmail(updatedSailor.getEmail());
+        existingSailor.setCruises(updatedSailor.getCruises());
 
         return sailorRepository.save(existingSailor);
     }
