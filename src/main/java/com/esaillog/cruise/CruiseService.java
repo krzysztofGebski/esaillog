@@ -1,0 +1,40 @@
+package com.esaillog.cruise;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class CruiseService {
+    private final CruiseRepository cruiseRepository;
+
+    public List<Cruise> findAll() {
+        return cruiseRepository.findAll();
+    }
+
+    public Cruise findById(UUID id) {
+        return cruiseRepository.findById(id).orElseThrow();
+    }
+
+    public Cruise save(Cruise cruise) {
+        return cruiseRepository.save(cruise);
+    }
+
+    public Cruise update(UUID id, Cruise updatedCruise) {
+        Cruise existingCruise = cruiseRepository.findById(id)
+                                                .orElseThrow(() -> new IllegalArgumentException("Cruise not found"));
+
+        existingCruise.setName(updatedCruise.getName());
+        existingCruise.setParticipants(updatedCruise.getParticipants());
+        existingCruise.setVisitedPorts(updatedCruise.getVisitedPorts());
+        existingCruise.setSailboat(updatedCruise.getSailboat());
+        return cruiseRepository.save(existingCruise);
+    }
+
+    public void delete(UUID id) {
+        cruiseRepository.deleteById(id);
+    }
+}

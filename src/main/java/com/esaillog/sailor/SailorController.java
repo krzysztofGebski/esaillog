@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+
+import static java.util.UUID.fromString;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class SailorController {
 
     @GetMapping("/{id}")
     public SailorDto getById(@PathVariable String id) {
-        Sailor sailor = sailorService.findById(UUID.fromString(id));
+        Sailor sailor = sailorService.findById(fromString(id));
         return sailorMapper.toSailorDto(sailor);
     }
 
@@ -32,11 +33,11 @@ public class SailorController {
 
     @PutMapping("/{id}")
     public SailorDto update(@PathVariable String id, @RequestBody SailorDto sailorDto) {
-        return sailorMapper.toSailorDto(sailorService.update(UUID.fromString(id), sailorMapper.toSailor(sailorDto)));
+        return sailorMapper.toSailorDto(sailorService.update(fromString(id), sailorMapper.toSailor(sailorDto)));
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        sailorService.delete(UUID.fromString(id));
+        sailorService.delete(fromString(id));
     }
 }
