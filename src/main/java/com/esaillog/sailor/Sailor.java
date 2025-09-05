@@ -2,18 +2,24 @@ package com.esaillog.sailor;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.esaillog.cruise.Cruise;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.Hibernate;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 public class Sailor {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,4 +29,19 @@ public class Sailor {
     private String email;
     @ManyToMany(mappedBy = "participants")
     private Set<Cruise> cruises;
+
+    @Override
+    public String toString() {
+        String cruiseNames = (cruises != null && Hibernate.isInitialized(cruises))
+                ? cruises.stream()
+                .map(Cruise::getName)
+                .collect(Collectors.joining(", "))
+                : "[lazy or uninitialized]";
+
+        return "Sailor{" + "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", cruises=[" + cruiseNames + "]" + '}';
+    }
 }

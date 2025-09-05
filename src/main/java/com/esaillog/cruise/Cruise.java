@@ -5,17 +5,23 @@ import com.esaillog.sailboat.Sailboat;
 import com.esaillog.sailor.Sailor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.Hibernate;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 public class Cruise {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,4 +44,27 @@ public class Cruise {
     @ManyToOne
     @JoinColumn(name = "sailboat_id")
     private Sailboat sailboat;
+
+    @Override
+    public String toString() {
+        String sailboatName = (sailboat != null && Hibernate.isInitialized(sailboat))
+                ? sailboat.getName()
+                : "null or uninitialized";
+
+        String participantNames = (participants != null && Hibernate.isInitialized(participants))
+                ? participants.stream()
+                .map(s -> s.getFirstName() + " " + s.getLastName())
+                .collect(Collectors.joining(", "))
+                : "[lazy or uninitialized]";
+
+        String visitedPortNames = (visitedPorts != null && Hibernate.isInitialized(visitedPorts))
+                ? visitedPorts.stream()
+                .map(Port::getName)
+                .collect(Collectors.joining(", "))
+                : "[lazy or uninitialized]";
+
+        return "Cruise{id=" + id + ", name='" + name + '\'' + ", participants=[" + participantNames + "]" +
+                ", visitedPorts=[" + visitedPortNames + "]" + ", sailboat=" + sailboatName +
+                '}';
+    }
 }
