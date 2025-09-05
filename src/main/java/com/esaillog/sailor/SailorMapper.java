@@ -22,18 +22,12 @@ public class SailorMapper {
     }
 
     public Sailor toSailor(SailorDto sailorDto) {
-        UUID uuid = getUuid(sailorDto.id());
         return new Sailor(
-                uuid,
+                (sailorDto.id() != null) ? UUID.fromString(sailorDto.id()) : null,
                 sailorDto.firstName(),
                 sailorDto.lastName(),
                 sailorDto.email(),
                 sailorDto.cruises().stream().map(cruiseMapper::toCruise).collect(Collectors.toSet())
         );
     }
-
-    private UUID getUuid(String id) {
-        return (id != null) ? UUID.fromString(id) : UUID.randomUUID();
-    }
 }
-

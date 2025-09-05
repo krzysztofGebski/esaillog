@@ -17,6 +17,7 @@ import java.util.UUID;
 @Data
 public class Sailboat {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
     private String registerNumber;

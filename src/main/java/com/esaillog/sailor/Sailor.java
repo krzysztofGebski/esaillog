@@ -1,15 +1,14 @@
 package com.esaillog.sailor;
 
+import java.util.Set;
+import java.util.UUID;
+
 import com.esaillog.cruise.Cruise;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -17,6 +16,7 @@ import java.util.UUID;
 @Data
 public class Sailor {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String firstName;
     private String lastName;

@@ -17,6 +17,7 @@ import java.util.UUID;
 @Data
 public class Port {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
     private String description;

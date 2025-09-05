@@ -25,17 +25,12 @@ public class PortMapper {
     }
 
     public Port toPort(PortDto portDto) {
-        UUID uuid = getUuid(portDto.id());
         return new Port(
-                uuid,
+                (portDto.id() != null) ? UUID.fromString(portDto.id()) : null,
                 portDto.name(),
                 portDto.description(),
                 portDto.sailboats().stream().map(sailboatMapper::toSailboat).collect(Collectors.toSet()),
                 portDto.cruises().stream().map(cruiseMapper::toCruise).collect(Collectors.toSet())
                 );
-    }
-
-    private UUID getUuid(String id) {
-        return (id != null) ? UUID.fromString(id) : UUID.randomUUID();
     }
 }

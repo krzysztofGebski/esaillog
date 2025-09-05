@@ -18,6 +18,7 @@ import java.util.UUID;
 @Data
 public class Cruise {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
     @ManyToMany
@@ -38,4 +39,3 @@ public class Cruise {
     @JoinColumn(name = "sailboat_id")
     private Sailboat sailboat;
 }
-

@@ -28,9 +28,8 @@ public class SailboatMapper {
     }
 
     public Sailboat toSailboat(SailboatDto sailboatDto) {
-        UUID uuid = getUuid(sailboatDto.id());
         return new Sailboat(
-                uuid,
+                (sailboatDto.id() != null) ? UUID.fromString(sailboatDto.id()) : null,
                 sailboatDto.name(),
                 sailboatDto.registerNumber(),
                 sailboatDto.type(),
@@ -39,9 +38,5 @@ public class SailboatMapper {
                 Double.parseDouble(sailboatDto.engineKW()),
                 sailboatDto.cruises().stream().map(cruiseMapper::toCruise).collect(Collectors.toSet())
                 );
-    }
-
-    private UUID getUuid(String id) {
-        return (id != null) ? UUID.fromString(id) : UUID.randomUUID();
     }
 }
