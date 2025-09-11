@@ -1,8 +1,5 @@
 package com.esaillog.sailboat;
 
-import com.esaillog.cruise.CruiseDto;
-import com.esaillog.port.PortDto;
-
 import java.util.Set;
 
 public record SailboatDto(
@@ -10,9 +7,9 @@ public record SailboatDto(
         String name,
         String registerNumber,
         String type,
-        PortDto homePort,
+        String homePortID,
         String length,
         String engineKW,
-        Set<CruiseDto> cruises
+        Set<String> cruisesIDs
 ) {
 }

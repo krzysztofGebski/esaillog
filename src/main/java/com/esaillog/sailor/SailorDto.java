@@ -1,7 +1,5 @@
 package com.esaillog.sailor;
 
-import com.esaillog.cruise.CruiseDto;
-
 import java.util.Set;
 
 public record SailorDto(
@@ -9,6 +7,6 @@ public record SailorDto(
         String firstName,
         String lastName,
         String email,
-        Set<CruiseDto> cruises
+        Set<String> cruisesIDs
 ) {
 }
