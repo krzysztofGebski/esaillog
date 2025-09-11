@@ -1,5 +1,6 @@
 package com.esaillog.port;
 
+import com.esaillog.error.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ public class PortService {
     }
 
     public Port findById(UUID id) {
-        return portRepository.findById(id).orElseThrow();
+        return portRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
     }
 
     public Port save(Port port) {
@@ -25,7 +26,7 @@ public class PortService {
 
     public Port update(UUID id, Port updatedPort) {
         Port existingPort = portRepository.findById(id)
-                                          .orElseThrow(() -> new IllegalArgumentException("Port not found"));
+                                          .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
 
         existingPort.setName(updatedPort.getName());
         existingPort.setDescription(updatedPort.getDescription());

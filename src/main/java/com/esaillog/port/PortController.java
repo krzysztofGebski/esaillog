@@ -1,11 +1,13 @@
 package com.esaillog.port;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
-
-import static java.util.UUID.fromString;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,24 +22,31 @@ public class PortController {
     }
 
     @GetMapping("/{id}")
-    public PortDto getById(@PathVariable String id) {
-        Port port = portService.findById(fromString(id));
+    public PortDto getById(@PathVariable UUID id) {
+        Port port = portService.findById(id);
         return portMapper.toPortDto(port);
     }
 
     @PostMapping()
-    public PortDto create(@RequestBody PortDto portDto) {
+    public ResponseEntity<PortDto> create(@RequestBody PortDto portDto) {
         Port port = portMapper.toPort(portDto);
-        return portMapper.toPortDto(portService.save(port));
+        Port savedPort = portService.save(port);
+        PortDto savedDto = portMapper.toPortDto(savedPort);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedPort.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(savedDto);
     }
 
     @PutMapping("/{id}")
-    public PortDto update(@PathVariable String id, @RequestBody PortDto portDto) {
-        return portMapper.toPortDto(portService.update(fromString(id), portMapper.toPort(portDto)));
+    public PortDto update(@PathVariable UUID id, @RequestBody PortDto portDto) {
+        return portMapper.toPortDto(portService.update(id, portMapper.toPort(portDto)));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable String id) {
-        portService.delete(fromString(id));
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        portService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

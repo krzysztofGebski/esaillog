@@ -1,8 +1,11 @@
 package com.esaillog.sailboat;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,25 +22,31 @@ public class SailboatController {
     }
 
     @GetMapping("/{id}")
-    public SailboatDto getById(@PathVariable String id) {
-        Sailboat sailboat = sailboatService.findById(UUID.fromString(id));
+    public SailboatDto getById(@PathVariable UUID id) {
+        Sailboat sailboat = sailboatService.findById(id);
         return sailboatMapper.toSailboatDto(sailboat);
     }
 
     @PostMapping()
-    public SailboatDto create(@RequestBody SailboatDto sailboatDto) {
+    public ResponseEntity<SailboatDto> create(@RequestBody SailboatDto sailboatDto) {
         Sailboat sailboat = sailboatMapper.toSailboat(sailboatDto);
-        return sailboatMapper.toSailboatDto(sailboatService.save(sailboat));
+        Sailboat savedSailboat = sailboatService.save(sailboat);
+        SailboatDto savedDto = sailboatMapper.toSailboatDto(savedSailboat);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedSailboat.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(savedDto);
     }
 
     @PutMapping("/{id}")
-    public SailboatDto update(@PathVariable String id, @RequestBody SailboatDto sailboatDto) {
-        return sailboatMapper.toSailboatDto(sailboatService.update(UUID.fromString(id),
-                sailboatMapper.toSailboat(sailboatDto)));
+    public SailboatDto update(@PathVariable UUID id, @RequestBody SailboatDto sailboatDto) {
+        return sailboatMapper.toSailboatDto(sailboatService.update(id, sailboatMapper.toSailboat(sailboatDto)));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable String id) {
-        sailboatService.delete(UUID.fromString(id));
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        sailboatService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

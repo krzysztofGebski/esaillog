@@ -1,5 +1,6 @@
 package com.esaillog.sailor;
 
+import com.esaillog.error.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ public class SailorService {
     }
 
     public Sailor findById(UUID id) {
-        return sailorRepository.findById(id).orElseThrow();
+        return sailorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Sailor not found with id: " + id));
     }
 
     public Sailor save(Sailor sailor) {
@@ -25,7 +26,7 @@ public class SailorService {
 
     public Sailor update(UUID id, Sailor updatedSailor) {
         Sailor existingSailor = sailorRepository.findById(id)
-                                                .orElseThrow(() -> new IllegalArgumentException("Sailor not found"));
+                                                .orElseThrow(() -> new EntityNotFoundException("Sailor not found with id: " + id));
 
         existingSailor.setFirstName(updatedSailor.getFirstName());
         existingSailor.setLastName(updatedSailor.getLastName());

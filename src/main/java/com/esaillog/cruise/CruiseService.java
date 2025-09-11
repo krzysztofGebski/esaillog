@@ -1,5 +1,6 @@
 package com.esaillog.cruise;
 
+import com.esaillog.error.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ public class CruiseService {
     }
 
     public Cruise findById(UUID id) {
-        return cruiseRepository.findById(id).orElseThrow();
+        return cruiseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cruise not found with id: " + id));
     }
 
     public Cruise save(Cruise cruise) {
@@ -25,7 +26,7 @@ public class CruiseService {
 
     public Cruise update(UUID id, Cruise updatedCruise) {
         Cruise existingCruise = cruiseRepository.findById(id)
-                                                .orElseThrow(() -> new IllegalArgumentException("Cruise not found"));
+                                                .orElseThrow(() -> new EntityNotFoundException("Cruise not found with id: " + id));
 
         existingCruise.setName(updatedCruise.getName());
         existingCruise.setParticipants(updatedCruise.getParticipants());
