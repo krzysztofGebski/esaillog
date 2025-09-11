@@ -17,14 +17,16 @@ public class PortController {
     private final PortMapper portMapper;
 
     @GetMapping
-    public List<PortDto> getAll() {
-        return portService.findAll().stream().map(portMapper::toPortDto).toList();
+    public ResponseEntity<List<PortDto>> getAll() {
+        List<PortDto> ports = portService.findAll().stream().map(portMapper::toPortDto).toList();
+        return ResponseEntity.ok(ports);
     }
 
     @GetMapping("/{id}")
-    public PortDto getById(@PathVariable UUID id) {
+    public ResponseEntity<PortDto> getById(@PathVariable UUID id) {
         Port port = portService.findById(id);
-        return portMapper.toPortDto(port);
+        PortDto portDto = portMapper.toPortDto(port);
+        return ResponseEntity.ok(portDto);
     }
 
     @PostMapping()
@@ -40,8 +42,9 @@ public class PortController {
     }
 
     @PutMapping("/{id}")
-    public PortDto update(@PathVariable UUID id, @RequestBody PortDto portDto) {
-        return portMapper.toPortDto(portService.update(id, portMapper.toPort(portDto)));
+    public ResponseEntity<PortDto> update(@PathVariable UUID id, @RequestBody PortDto portDto) {
+        PortDto updatedDto = portMapper.toPortDto(portService.update(id, portMapper.toPort(portDto)));
+        return ResponseEntity.ok(updatedDto);
     }
 
     @DeleteMapping("/{id}")

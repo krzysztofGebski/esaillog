@@ -17,14 +17,16 @@ public class SailboatController {
     private final SailboatMapper sailboatMapper;
 
     @GetMapping
-    public List<SailboatDto> getAll() {
-        return sailboatService.findAll().stream().map(sailboatMapper::toSailboatDto).toList();
+    public ResponseEntity<List<SailboatDto>> getAll() {
+        List<SailboatDto> sailboats = sailboatService.findAll().stream().map(sailboatMapper::toSailboatDto).toList();
+        return ResponseEntity.ok(sailboats);
     }
 
     @GetMapping("/{id}")
-    public SailboatDto getById(@PathVariable UUID id) {
+    public ResponseEntity<SailboatDto> getById(@PathVariable UUID id) {
         Sailboat sailboat = sailboatService.findById(id);
-        return sailboatMapper.toSailboatDto(sailboat);
+        SailboatDto sailboatDto = sailboatMapper.toSailboatDto(sailboat);
+        return ResponseEntity.ok(sailboatDto);
     }
 
     @PostMapping()
@@ -40,8 +42,9 @@ public class SailboatController {
     }
 
     @PutMapping("/{id}")
-    public SailboatDto update(@PathVariable UUID id, @RequestBody SailboatDto sailboatDto) {
-        return sailboatMapper.toSailboatDto(sailboatService.update(id, sailboatMapper.toSailboat(sailboatDto)));
+    public ResponseEntity<SailboatDto> update(@PathVariable UUID id, @RequestBody SailboatDto sailboatDto) {
+        SailboatDto updatedDto = sailboatMapper.toSailboatDto(sailboatService.update(id, sailboatMapper.toSailboat(sailboatDto)));
+        return ResponseEntity.ok(updatedDto);
     }
 
     @DeleteMapping("/{id}")

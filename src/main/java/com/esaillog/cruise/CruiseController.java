@@ -17,14 +17,16 @@ public class CruiseController {
     private final CruiseMapper cruiseMapper;
 
     @GetMapping
-    public List<CruiseDto> getAll() {
-        return cruiseService.findAll().stream().map(cruiseMapper::toCruiseDto).toList();
+    public ResponseEntity<List<CruiseDto>> getAll() {
+        List<CruiseDto> cruises = cruiseService.findAll().stream().map(cruiseMapper::toCruiseDto).toList();
+        return ResponseEntity.ok(cruises);
     }
 
     @GetMapping("/{id}")
-    public CruiseDto getById(@PathVariable UUID id) {
+    public ResponseEntity<CruiseDto> getById(@PathVariable UUID id) {
         Cruise cruise = cruiseService.findById(id);
-        return cruiseMapper.toCruiseDto(cruise);
+        CruiseDto cruiseDto = cruiseMapper.toCruiseDto(cruise);
+        return ResponseEntity.ok(cruiseDto);
     }
 
     @PostMapping()
@@ -40,8 +42,9 @@ public class CruiseController {
     }
 
     @PutMapping("/{id}")
-    public CruiseDto update(@PathVariable UUID id, @RequestBody CruiseDto cruiseDto) {
-        return cruiseMapper.toCruiseDto(cruiseService.update(id, cruiseMapper.toCruise(cruiseDto)));
+    public ResponseEntity<CruiseDto> update(@PathVariable UUID id, @RequestBody CruiseDto cruiseDto) {
+        CruiseDto updatedDto = cruiseMapper.toCruiseDto(cruiseService.update(id, cruiseMapper.toCruise(cruiseDto)));
+        return ResponseEntity.ok(updatedDto);
     }
 
     @DeleteMapping("/{id}")

@@ -17,14 +17,16 @@ public class SailorController {
     private final SailorMapper sailorMapper;
 
     @GetMapping
-    public List<SailorDto> getAll() {
-        return sailorService.findAll().stream().map(sailorMapper::toSailorDto).toList();
+    public ResponseEntity<List<SailorDto>> getAll() {
+        List<SailorDto> sailors = sailorService.findAll().stream().map(sailorMapper::toSailorDto).toList();
+        return ResponseEntity.ok(sailors);
     }
 
     @GetMapping("/{id}")
-    public SailorDto getById(@PathVariable UUID id) {
+    public ResponseEntity<SailorDto> getById(@PathVariable UUID id) {
         Sailor sailor = sailorService.findById(id);
-        return sailorMapper.toSailorDto(sailor);
+        SailorDto sailorDto = sailorMapper.toSailorDto(sailor);
+        return ResponseEntity.ok(sailorDto);
     }
 
     @PostMapping()
@@ -42,8 +44,9 @@ public class SailorController {
     }
 
     @PutMapping("/{id}")
-    public SailorDto update(@PathVariable UUID id, @RequestBody SailorDto sailorDto) {
-        return sailorMapper.toSailorDto(sailorService.update(id, sailorMapper.toSailor(sailorDto)));
+    public ResponseEntity<SailorDto> update(@PathVariable UUID id, @RequestBody SailorDto sailorDto) {
+        SailorDto updatedDto = sailorMapper.toSailorDto(sailorService.update(id, sailorMapper.toSailor(sailorDto)));
+        return ResponseEntity.ok(updatedDto);
     }
 
     @DeleteMapping("/{id}")
