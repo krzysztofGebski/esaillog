@@ -14,6 +14,7 @@ public record SailorDto(
         @NotBlank(message = "Email cannot be blank")
         @Email(message = "Email should be valid")
         String email,
-        Set<String> cruisesIDs
+        Set<String> cruisesIDs,
+        Set<String> skipperedCruisesIDs
 ) {
 }

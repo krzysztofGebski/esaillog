@@ -44,6 +44,9 @@ public class Cruise {
     @ManyToOne
     @JoinColumn(name = "sailboat_id")
     private Sailboat sailboat;
+    @ManyToOne
+    @JoinColumn(name = "skipper_id")
+    private Sailor skipper;
 
     @Override
     public String toString() {
@@ -62,9 +65,14 @@ public class Cruise {
                 .map(Port::getName)
                 .collect(Collectors.joining(", "))
                 : "[lazy or uninitialized]";
+        
+        String skipperName = (skipper != null && Hibernate.isInitialized(skipper))
+                ? skipper.getFirstName() + " " + skipper.getLastName()
+                : "null or uninitialized";
 
         return "Cruise{id=" + id + ", name='" + name + '\'' + ", participants=[" + participantNames + "]" +
                 ", visitedPorts=[" + visitedPortNames + "]" + ", sailboat=" + sailboatName +
+                ", skipper=" + skipperName +
                 '}';
     }
 }

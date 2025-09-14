@@ -1,5 +1,6 @@
 package com.esaillog.sailor;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,7 +29,9 @@ public class Sailor {
     private String lastName;
     private String email;
     @ManyToMany(mappedBy = "participants")
-    private Set<Cruise> cruises;
+    private Set<Cruise> cruises = new HashSet<>();
+    @OneToMany(mappedBy = "skipper")
+    private Set<Cruise> skipperedCruises = new HashSet<>();
 
     @Override
     public String toString() {
@@ -36,12 +39,20 @@ public class Sailor {
                 ? cruises.stream()
                 .map(Cruise::getName)
                 .collect(Collectors.joining(", "))
-                : "[lazy or uninitialized]";
+                : "[uninitialized]";
+
+        String skipperedCruiseNames = (skipperedCruises != null && Hibernate.isInitialized(skipperedCruises))
+                ? skipperedCruises.stream()
+                .map(Cruise::getName)
+                .collect(Collectors.joining(", "))
+                : "[uninitialized]";
 
         return "Sailor{" + "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", cruises=[" + cruiseNames + "]" + '}';
+                ", cruises=" + cruiseNames +
+                ", skipperedCruises=" + skipperedCruiseNames +
+                '}';
     }
 }

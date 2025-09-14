@@ -32,6 +32,7 @@ public class CruiseService {
         existingCruise.setParticipants(updatedCruise.getParticipants());
         existingCruise.setVisitedPorts(updatedCruise.getVisitedPorts());
         existingCruise.setSailboat(updatedCruise.getSailboat());
+        existingCruise.setSkipper(updatedCruise.getSkipper());
         return cruiseRepository.save(existingCruise);
     }
 

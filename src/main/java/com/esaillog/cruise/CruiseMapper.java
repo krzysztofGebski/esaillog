@@ -34,7 +34,8 @@ public class CruiseMapper {
                 (cruise.getVisitedPorts() != null) ? cruise.getVisitedPorts().stream()
                         .map(visitedPort -> visitedPort.getId().toString())
                         .collect(Collectors.toSet()) : Collections.emptySet(),
-                cruise.getSailboat().getId().toString()
+                cruise.getSailboat().getId().toString(),
+                cruise.getSkipper().getId().toString()
         );
 
     }
@@ -45,7 +46,8 @@ public class CruiseMapper {
                 cruiseDto.name(),
                 getParticipantsFromIds(cruiseDto.participantsIDs()),
                 getPortsFromIds(cruiseDto.visitedPortsIDs()),
-                getSailboatFromId(cruiseDto.sailboatID())
+                getSailboatFromId(cruiseDto.sailboatID()),
+                getSkipperFromId(cruiseDto.skipperID())
         );
     }
 
@@ -84,5 +86,10 @@ public class CruiseMapper {
     private Sailboat getSailboatFromId(String sailboatID) {
         return sailboatRepository.findById(UUID.fromString(sailboatID))
                 .orElseThrow(() -> new EntityNotFoundException("Sailboat not found with id: " + sailboatID));
+    }
+
+    private Sailor getSkipperFromId(String skipperID) {
+        return sailorRepository.findById(UUID.fromString(skipperID))
+                .orElseThrow(() -> new EntityNotFoundException("Sailor (skipper) not found with id: " + skipperID));
     }
 }

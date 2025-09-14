@@ -26,6 +26,9 @@ public class SailorMapper {
                 sailor.getEmail(),
                 (sailor.getCruises() != null) ? sailor.getCruises().stream()
                         .map(cruise -> cruise.getId().toString())
+                        .collect(Collectors.toSet()) : Collections.emptySet(),
+                (sailor.getSkipperedCruises() != null) ? sailor.getSkipperedCruises().stream()
+                        .map(cruise -> cruise.getId().toString())
                         .collect(Collectors.toSet()) : Collections.emptySet());
     }
 
@@ -35,7 +38,8 @@ public class SailorMapper {
                 sailorDto.firstName(),
                 sailorDto.lastName(),
                 sailorDto.email(),
-                getCruisesFromIds(sailorDto.cruisesIDs())
+                getCruisesFromIds(sailorDto.cruisesIDs()),
+                getCruisesFromIds(sailorDto.skipperedCruisesIDs())
         );
     }
 
