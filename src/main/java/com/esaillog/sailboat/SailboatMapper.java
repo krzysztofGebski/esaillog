@@ -1,15 +1,14 @@
 package com.esaillog.sailboat;
 
 import java.util.Collections;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.esaillog.cruise.Cruise;
+import com.esaillog.common.EntityFinder;
 import com.esaillog.cruise.CruiseRepository;
-import com.esaillog.error.EntityNotFoundException;
+import com.esaillog.cruise.Cruise;
 import com.esaillog.port.Port;
 import com.esaillog.port.PortRepository;
 
@@ -20,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class SailboatMapper {
     private final PortRepository portRepository;
     private final CruiseRepository cruiseRepository;
+    private final EntityFinder entityFinder;
 
     public SailboatDto toSailboatDto(Sailboat sailboat) {
         return new SailboatDto(
@@ -45,28 +45,11 @@ public class SailboatMapper {
                 getPortFromId(sailboatDto.homePortID()),
                 Double.parseDouble(sailboatDto.length()),
                 Double.parseDouble(sailboatDto.engineKW()),
-                getCruisesFromIds(sailboatDto.cruisesIDs())
+                entityFinder.findAllByIds(cruiseRepository, sailboatDto.cruisesIDs(), "Cruises", Cruise::getId)
         );
     }
 
-    private Set<Cruise> getCruisesFromIds(Set<String> cruisesIDs) {
-        if (cruisesIDs == null || cruisesIDs.isEmpty()) {
-            return Collections.emptySet();
-        }
-        Set<UUID> cruiseUuids = cruisesIDs.stream().map(UUID::fromString).collect(Collectors.toSet());
-        Set<Cruise> cruises = cruiseRepository.findAllById(cruiseUuids).stream().collect(Collectors.toSet());
-
-        if (cruises.size() != cruiseUuids.size()) {
-            Set<UUID> foundCruiseIds = cruises.stream().map(Cruise::getId).collect(Collectors.toSet());
-            cruiseUuids.removeAll(foundCruiseIds);
-            throw new EntityNotFoundException("Cruises not found with ids: " + cruiseUuids);
-        }
-
-        return cruises;
-    }
-
     private Port getPortFromId(String portID) {
-        return portRepository.findById(UUID.fromString(portID))
-                .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + portID));
+        return entityFinder.findById(portRepository, portID, "Port");
     }
 }

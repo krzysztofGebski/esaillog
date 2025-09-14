@@ -25,15 +25,12 @@ public class CruiseService {
     }
 
     public Cruise update(UUID id, Cruise updatedCruise) {
-        Cruise existingCruise = cruiseRepository.findById(id)
-                                                .orElseThrow(() -> new EntityNotFoundException("Cruise not found with id: " + id));
-
-        existingCruise.setName(updatedCruise.getName());
-        existingCruise.setParticipants(updatedCruise.getParticipants());
-        existingCruise.setVisitedPorts(updatedCruise.getVisitedPorts());
-        existingCruise.setSailboat(updatedCruise.getSailboat());
-        existingCruise.setSkipper(updatedCruise.getSkipper());
-        return cruiseRepository.save(existingCruise);
+        return cruiseRepository.findById(id)
+                .map(existingCruise -> {
+                    updatedCruise.setId(existingCruise.getId());
+                    return cruiseRepository.save(updatedCruise);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Cruise not found with id: " + id));
     }
 
     public void delete(UUID id) {

@@ -25,15 +25,12 @@ public class SailorService {
     }
 
     public Sailor update(UUID id, Sailor updatedSailor) {
-        Sailor existingSailor = sailorRepository.findById(id)
-                                                .orElseThrow(() -> new EntityNotFoundException("Sailor not found with id: " + id));
-
-        existingSailor.setFirstName(updatedSailor.getFirstName());
-        existingSailor.setLastName(updatedSailor.getLastName());
-        existingSailor.setEmail(updatedSailor.getEmail());
-        existingSailor.setCruises(updatedSailor.getCruises());
-
-        return sailorRepository.save(existingSailor);
+        return sailorRepository.findById(id)
+                .map(existingSailor -> {
+                    updatedSailor.setId(existingSailor.getId());
+                    return sailorRepository.save(updatedSailor);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Sailor not found with id: " + id));
     }
 
     public void delete(UUID id) {

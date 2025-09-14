@@ -25,14 +25,12 @@ public class PortService {
     }
 
     public Port update(UUID id, Port updatedPort) {
-        Port existingPort = portRepository.findById(id)
-                                          .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
-
-        existingPort.setName(updatedPort.getName());
-        existingPort.setDescription(updatedPort.getDescription());
-        existingPort.setSailboats(updatedPort.getSailboats());
-        existingPort.setCruises(updatedPort.getCruises());
-        return portRepository.save(existingPort);
+        return portRepository.findById(id)
+                .map(existingPort -> {
+                    updatedPort.setId(existingPort.getId());
+                    return portRepository.save(updatedPort);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
     }
 
     public void delete(UUID id) {
