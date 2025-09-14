@@ -1,5 +1,6 @@
 package com.esaillog.cruise;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class CruiseController {
     }
 
     @PostMapping()
-    public ResponseEntity<CruiseDto> create(@RequestBody CruiseDto cruiseDto) {
+    public ResponseEntity<CruiseDto> create(@Valid @RequestBody CruiseDto cruiseDto) {
         Cruise cruise = cruiseMapper.toCruise(cruiseDto);
         Cruise savedCruise = cruiseService.save(cruise);
         CruiseDto savedDto = cruiseMapper.toCruiseDto(savedCruise);
@@ -42,7 +43,7 @@ public class CruiseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CruiseDto> update(@PathVariable UUID id, @RequestBody CruiseDto cruiseDto) {
+    public ResponseEntity<CruiseDto> update(@PathVariable UUID id, @Valid @RequestBody CruiseDto cruiseDto) {
         CruiseDto updatedDto = cruiseMapper.toCruiseDto(cruiseService.update(id, cruiseMapper.toCruise(cruiseDto)));
         return ResponseEntity.ok(updatedDto);
     }

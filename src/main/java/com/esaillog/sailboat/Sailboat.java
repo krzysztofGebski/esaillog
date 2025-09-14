@@ -27,7 +27,8 @@ public class Sailboat {
     private UUID id;
     private String name;
     private String registerNumber;
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private SailboatType type;
     @ManyToOne
     @JoinColumn(name = "port_id")
     private Port homePort;

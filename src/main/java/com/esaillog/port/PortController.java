@@ -1,5 +1,6 @@
 package com.esaillog.port;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class PortController {
     }
 
     @PostMapping()
-    public ResponseEntity<PortDto> create(@RequestBody PortDto portDto) {
+    public ResponseEntity<PortDto> create(@Valid @RequestBody PortDto portDto) {
         Port port = portMapper.toPort(portDto);
         Port savedPort = portService.save(port);
         PortDto savedDto = portMapper.toPortDto(savedPort);
@@ -42,7 +43,7 @@ public class PortController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PortDto> update(@PathVariable UUID id, @RequestBody PortDto portDto) {
+    public ResponseEntity<PortDto> update(@PathVariable UUID id, @Valid @RequestBody PortDto portDto) {
         PortDto updatedDto = portMapper.toPortDto(portService.update(id, portMapper.toPort(portDto)));
         return ResponseEntity.ok(updatedDto);
     }

@@ -1,5 +1,6 @@
 package com.esaillog.sailor;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class SailorController {
     }
 
     @PostMapping()
-    public ResponseEntity<SailorDto> create(@RequestBody SailorDto sailorDto) {
+    public ResponseEntity<SailorDto> create(@Valid @RequestBody SailorDto sailorDto) {
         Sailor sailor = sailorMapper.toSailor(sailorDto);
         Sailor savedSailor = sailorService.save(sailor);
         SailorDto savedSailorDto = sailorMapper.toSailorDto(savedSailor);
@@ -44,7 +45,7 @@ public class SailorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SailorDto> update(@PathVariable UUID id, @RequestBody SailorDto sailorDto) {
+    public ResponseEntity<SailorDto> update(@PathVariable UUID id, @Valid @RequestBody SailorDto sailorDto) {
         SailorDto updatedDto = sailorMapper.toSailorDto(sailorService.update(id, sailorMapper.toSailor(sailorDto)));
         return ResponseEntity.ok(updatedDto);
     }

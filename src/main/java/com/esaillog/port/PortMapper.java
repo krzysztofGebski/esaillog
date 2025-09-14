@@ -1,5 +1,6 @@
 package com.esaillog.port;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,9 +26,13 @@ public class PortMapper {
                 port.getId().toString(),
                 port.getName(),
                 port.getDescription(),
-                port.getSailboats().stream().map(sailboat -> sailboat.getId().toString()).collect(Collectors.toSet()),
-                port.getCruises().stream().map(cruise -> cruise.getId().toString()).collect(Collectors.toSet())
-                );
+                (port.getSailboats() != null) ? port.getSailboats().stream()
+                        .map(sailboat -> sailboat.getId().toString())
+                        .collect(Collectors.toSet()) : Collections.emptySet(),
+                (port.getCruises() != null) ? port.getCruises().stream()
+                        .map(cruise -> cruise.getId().toString())
+                        .collect(Collectors.toSet()) : Collections.emptySet()
+        );
     }
 
     public Port toPort(PortDto portDto) {
@@ -37,20 +42,38 @@ public class PortMapper {
                 portDto.description(),
                 getSailboatsFromIds(portDto.sailboatsIDs()),
                 getCruisesFromIds(portDto.cruisesIDs())
-                );
+        );
     }
 
     private Set<Sailboat> getSailboatsFromIds(Set<String> sailboatsIDs) {
-        return sailboatsIDs.stream()
-                .map(id -> sailboatRepository.findById(UUID.fromString(id))
-                        .orElseThrow(() -> new EntityNotFoundException("Sailboat not found with id: " + id)))
-                .collect(Collectors.toSet());
+        if (sailboatsIDs == null || sailboatsIDs.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<UUID> sailboatUuids = sailboatsIDs.stream().map(UUID::fromString).collect(Collectors.toSet());
+        Set<Sailboat> sailboats = sailboatRepository.findAllById(sailboatUuids).stream().collect(Collectors.toSet());
+
+        if (sailboats.size() != sailboatUuids.size()) {
+            Set<UUID> foundSailboatIds = sailboats.stream().map(Sailboat::getId).collect(Collectors.toSet());
+            sailboatUuids.removeAll(foundSailboatIds);
+            throw new EntityNotFoundException("Sailboats not found with ids: " + sailboatUuids);
+        }
+
+        return sailboats;
     }
 
     private Set<Cruise> getCruisesFromIds(Set<String> cruisesIDs) {
-        return cruisesIDs.stream()
-                .map(id -> cruiseRepository.findById(UUID.fromString(id))
-                        .orElseThrow(() -> new EntityNotFoundException("Cruise not found with id: " + id)))
-                .collect(Collectors.toSet());
+        if (cruisesIDs == null || cruisesIDs.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<UUID> cruiseUuids = cruisesIDs.stream().map(UUID::fromString).collect(Collectors.toSet());
+        Set<Cruise> cruises = cruiseRepository.findAllById(cruiseUuids).stream().collect(Collectors.toSet());
+
+        if (cruises.size() != cruiseUuids.size()) {
+            Set<UUID> foundCruiseIds = cruises.stream().map(Cruise::getId).collect(Collectors.toSet());
+            cruiseUuids.removeAll(foundCruiseIds);
+            throw new EntityNotFoundException("Cruises not found with ids: " + cruiseUuids);
+        }
+
+        return cruises;
     }
 }

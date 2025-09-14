@@ -1,5 +1,6 @@
 package com.esaillog.sailboat;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class SailboatController {
     }
 
     @PostMapping()
-    public ResponseEntity<SailboatDto> create(@RequestBody SailboatDto sailboatDto) {
+    public ResponseEntity<SailboatDto> create(@Valid @RequestBody SailboatDto sailboatDto) {
         Sailboat sailboat = sailboatMapper.toSailboat(sailboatDto);
         Sailboat savedSailboat = sailboatService.save(sailboat);
         SailboatDto savedDto = sailboatMapper.toSailboatDto(savedSailboat);
@@ -42,7 +43,7 @@ public class SailboatController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SailboatDto> update(@PathVariable UUID id, @RequestBody SailboatDto sailboatDto) {
+    public ResponseEntity<SailboatDto> update(@PathVariable UUID id, @Valid @RequestBody SailboatDto sailboatDto) {
         SailboatDto updatedDto = sailboatMapper.toSailboatDto(sailboatService.update(id, sailboatMapper.toSailboat(sailboatDto)));
         return ResponseEntity.ok(updatedDto);
     }
