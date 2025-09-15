@@ -1,45 +1,34 @@
 package com.esaillog.sailor;
 
-import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
-import com.esaillog.common.EntityFinder;
-import com.esaillog.cruise.CruiseRepository;
 import com.esaillog.cruise.Cruise;
+import java.util.Collections;
 
-import lombok.RequiredArgsConstructor;
+@Mapper(componentModel = "spring")
+public interface SailorMapper {
 
-@Service
-@RequiredArgsConstructor
-public class SailorMapper {
-    private final CruiseRepository cruiseRepository;
-    private final EntityFinder entityFinder;
+        @Mapping(source = "cruises", target = "cruisesIds", qualifiedByName = "cruisesToIds")
+        @Mapping(source = "skipperedCruises", target = "skipperedCruisesIds", qualifiedByName = "cruisesToIds")
+        SailorDto toSailorDto(Sailor sailor);
 
-    public SailorDto toSailorDto(Sailor sailor) {
-        return new SailorDto(
-                sailor.getId().toString(),
-                sailor.getFirstName(),
-                sailor.getLastName(),
-                sailor.getEmail(),
-                (sailor.getCruises() != null) ? sailor.getCruises().stream()
-                        .map(cruise -> cruise.getId().toString())
-                        .collect(Collectors.toSet()) : Collections.emptySet(),
-                (sailor.getSkipperedCruises() != null) ? sailor.getSkipperedCruises().stream()
-                        .map(cruise -> cruise.getId().toString())
-                        .collect(Collectors.toSet()) : Collections.emptySet());
-    }
+        @Mapping(target = "cruises", ignore = true)
+        @Mapping(target = "skipperedCruises", ignore = true)
+        Sailor toSailor(SailorDto sailorDto);
 
-    public Sailor toSailor(SailorDto sailorDto) {
-        return new Sailor(
-                (sailorDto.id() != null) ? UUID.fromString(sailorDto.id()) : null,
-                sailorDto.firstName(),
-                sailorDto.lastName(),
-                sailorDto.email(),
-                entityFinder.findAllByIds(cruiseRepository, sailorDto.cruisesIDs(), "Cruises", Cruise::getId),
-                entityFinder.findAllByIds(cruiseRepository, sailorDto.skipperedCruisesIDs(), "Cruises", Cruise::getId)
-        );
-    }
+        @Named("cruisesToIds")
+        default Set<UUID> cruiseToId(Set<Cruise> cruises) {
+                if (cruises == null) {
+                        return Collections.emptySet();
+                }
+                return cruises.stream()
+                                .map(Cruise::getId)
+                                .collect(Collectors.toSet());
+        }
 }

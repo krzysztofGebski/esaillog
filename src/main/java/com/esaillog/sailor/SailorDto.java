@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.Set;
+import java.util.UUID;
 
 public record SailorDto(
         String id,
@@ -14,7 +15,7 @@ public record SailorDto(
         @NotBlank(message = "Email cannot be blank")
         @Email(message = "Email should be valid")
         String email,
-        Set<String> cruisesIDs,
-        Set<String> skipperedCruisesIDs
+        Set<UUID> cruisesIds,
+        Set<UUID> skipperedCruisesIds
 ) {
 }
