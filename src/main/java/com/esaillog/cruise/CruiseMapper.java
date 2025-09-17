@@ -1,61 +1,66 @@
 package com.esaillog.cruise;
 
-import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
-import com.esaillog.common.EntityFinder;
 import com.esaillog.port.Port;
-import com.esaillog.port.PortRepository;
-import com.esaillog.sailboat.Sailboat;
-import com.esaillog.sailboat.SailboatRepository;
 import com.esaillog.sailor.Sailor;
-import com.esaillog.sailor.SailorRepository;
 
-import lombok.RequiredArgsConstructor;
+@Mapper(componentModel = "spring")
+public interface CruiseMapper {
 
-@Service
-@RequiredArgsConstructor
-public class CruiseMapper {
-    private final SailboatRepository sailboatRepository;
-    private final SailorRepository sailorRepository;
-    private final PortRepository portRepository;
-    private final EntityFinder entityFinder;
+    @Mapping(source = "participants", target = "participantsIds", qualifiedByName = "sailorsToIds")
+    @Mapping(source = "visitedPorts", target = "visitedPortsIds", qualifiedByName = "portsToIds")
+    @Mapping(source = "sailboat", target = "sailboatId", qualifiedByName = "sailboatToId")
+    @Mapping(source = "skipper", target = "skipperId", qualifiedByName = "sailorToId")
+    CruiseDto toCruiseDto(Cruise cruise);
 
-    public CruiseDto toCruiseDto(Cruise cruise) {
-        return new CruiseDto(
-                cruise.getId().toString(),
-                cruise.getName(),
-                (cruise.getParticipants() != null) ? cruise.getParticipants().stream()
-                        .map(participant -> participant.getId().toString())
-                        .collect(Collectors.toSet()) : Collections.emptySet(),
-                (cruise.getVisitedPorts() != null) ? cruise.getVisitedPorts().stream()
-                        .map(visitedPort -> visitedPort.getId().toString())
-                        .collect(Collectors.toSet()) : Collections.emptySet(),
-                cruise.getSailboat().getId().toString(),
-                cruise.getSkipper().getId().toString()
-        );
+    @Mapping(target = "participants", ignore = true)
+    @Mapping(target = "visitedPorts", ignore = true)
+    @Mapping(target = "sailboat", ignore = true)
+    @Mapping(target = "skipper", ignore = true)
+    @Mapping(target = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Cruise toCruise(CruiseDto cruiseDto);
 
+    @Named("sailorsToIds")
+    default Set<UUID> sailorsToIds(Set<Sailor> sailors) {
+        if (sailors == null) {
+            return Set.of();
+        }
+        return sailors.stream()
+                .map(Sailor::getId)
+                .collect(Collectors.toSet());
     }
 
-    public Cruise toCruise(CruiseDto cruiseDto) {
-        return new Cruise(
-                (cruiseDto.id() != null) ? UUID.fromString(cruiseDto.id()) : null,
-                cruiseDto.name(),
-                entityFinder.findAllByIds(sailorRepository, cruiseDto.participantsIDs(), "Sailors", Sailor::getId),
-                entityFinder.findAllByIds(portRepository, cruiseDto.visitedPortsIDs(), "Ports", Port::getId),
-                getSailboatFromId(cruiseDto.sailboatID()),
-                getSkipperFromId(cruiseDto.skipperID())
-        );
+    @Named("sailorToId")
+    default UUID sailorToId(Sailor sailor) {
+        if (sailor == null) {
+            return null;
+        }
+        return sailor.getId();
     }
 
-    private Sailboat getSailboatFromId(String sailboatID) {
-        return entityFinder.findById(sailboatRepository, sailboatID, "Sailboat");
+    @Named("portsToIds")
+    default Set<UUID> portsToIds(Set<Port> ports) {
+        if (ports == null) {
+            return Set.of();
+        }
+        return ports.stream()
+                .map(Port::getId)
+                .collect(Collectors.toSet());
     }
 
-    private Sailor getSkipperFromId(String skipperID) {
-        return entityFinder.findById(sailorRepository, skipperID, "Sailor (skipper)");
+    @Named("sailboatToId")
+    default UUID sailboatToId(com.esaillog.sailboat.Sailboat sailboat) {
+        if (sailboat == null) {
+            return null;
+        }
+        return sailboat.getId();
     }
 }

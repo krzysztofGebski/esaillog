@@ -4,16 +4,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
+import java.util.UUID;
 
 public record CruiseDto(
-        String id,
+        UUID id,
         @NotBlank(message = "Name cannot be blank")
         String name,
-        Set<String> participantsIDs,
-        Set<String> visitedPortsIDs,
+        Set<UUID> participantsIds,
+        Set<UUID> visitedPortsIds,
         @NotBlank(message = "Sailboat ID cannot be blank")
-        String sailboatID,
+        UUID sailboatId,
         @NotNull(message = "Skipper ID cannot be null")
-        String skipperID
+        UUID skipperId
 ) {
 }

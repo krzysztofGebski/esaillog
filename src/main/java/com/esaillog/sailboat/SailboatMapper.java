@@ -1,55 +1,45 @@
 package com.esaillog.sailboat;
 
-import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
-import com.esaillog.common.EntityFinder;
-import com.esaillog.cruise.CruiseRepository;
 import com.esaillog.cruise.Cruise;
 import com.esaillog.port.Port;
-import com.esaillog.port.PortRepository;
 
-import lombok.RequiredArgsConstructor;
+@Mapper(componentModel = "spring")
+public interface SailboatMapper {
+    
+    @Mapping(source = "cruises", target = "cruiseIds", qualifiedByName = "cruisesToIds")
+    @Mapping(source = "homePort", target = "homePortId", qualifiedByName = "portToId")
+    SailboatDto toSailboatDto(Sailboat sailboat);
 
-@Service
-@RequiredArgsConstructor
-public class SailboatMapper {
-    private final PortRepository portRepository;
-    private final CruiseRepository cruiseRepository;
-    private final EntityFinder entityFinder;
+    @Mapping(target = "homePort", ignore = true)
+    @Mapping(target = "cruises", ignore = true)
+    @Mapping(target = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Sailboat toSailboat(SailboatDto sailboatDto);
 
-    public SailboatDto toSailboatDto(Sailboat sailboat) {
-        return new SailboatDto(
-                sailboat.getId().toString(),
-                sailboat.getName(),
-                sailboat.getRegisterNumber(),
-                sailboat.getType(),
-                sailboat.getHomePort().getId().toString(),
-                String.valueOf(sailboat.getLength()),
-                String.valueOf(sailboat.getEngineKW()),
-                (sailboat.getCruises() != null) ? sailboat.getCruises().stream()
-                        .map(cruise -> cruise.getId().toString())
-                        .collect(Collectors.toSet()) : Collections.emptySet()
-        );
+    @Named("cruisesToIds")
+    default Set<UUID> cruisesToIds(Set<Cruise> cruises) {
+        if (cruises == null) {
+            return Set.of();
+        }
+        return cruises.stream()
+                .map(Cruise::getId)
+                .collect(Collectors.toSet());
     }
 
-    public Sailboat toSailboat(SailboatDto sailboatDto) {
-        return new Sailboat(
-                (sailboatDto.id() != null) ? UUID.fromString(sailboatDto.id()) : null,
-                sailboatDto.name(),
-                sailboatDto.registerNumber(),
-                sailboatDto.type(),
-                getPortFromId(sailboatDto.homePortID()),
-                Double.parseDouble(sailboatDto.length()),
-                Double.parseDouble(sailboatDto.engineKW()),
-                entityFinder.findAllByIds(cruiseRepository, sailboatDto.cruisesIDs(), "Cruises", Cruise::getId)
-        );
+    @Named("portToId")
+    default UUID portToId(Port port) {
+        if (port == null) {
+            return null;
+        }
+        return port.getId();
     }
-
-    private Port getPortFromId(String portID) {
-        return entityFinder.findById(portRepository, portID, "Port");
-    }
+   
 }

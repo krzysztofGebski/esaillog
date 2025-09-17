@@ -5,11 +5,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import com.esaillog.cruise.Cruise;
-import java.util.Collections;
 
 @Mapper(componentModel = "spring")
 public interface SailorMapper {
@@ -20,12 +20,13 @@ public interface SailorMapper {
 
         @Mapping(target = "cruises", ignore = true)
         @Mapping(target = "skipperedCruises", ignore = true)
+        @Mapping(target = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
         Sailor toSailor(SailorDto sailorDto);
 
         @Named("cruisesToIds")
-        default Set<UUID> cruiseToId(Set<Cruise> cruises) {
+        default Set<UUID> cruisesToIds(Set<Cruise> cruises) {
                 if (cruises == null) {
-                        return Collections.emptySet();
+                        return Set.of();
                 }
                 return cruises.stream()
                                 .map(Cruise::getId)
