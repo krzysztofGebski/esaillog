@@ -10,13 +10,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -47,6 +54,12 @@ public class Cruise {
     @ManyToOne
     @JoinColumn(name = "skipper_id")
     private Sailor skipper;
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+    @LastModifiedDate
+    @Column(nullable = false)
+    private Instant updatedAt;
 
     @Override
     public String toString() {
@@ -70,9 +83,16 @@ public class Cruise {
                 ? skipper.getFirstName() + " " + skipper.getLastName()
                 : "null or uninitialized";
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+
+        String formattedCreatedAt = (createdAt != null) ? formatter.format(createdAt) : "null";
+        String formattedUpdatedAt = (updatedAt != null) ? formatter.format(updatedAt) : "null";
+
         return "Cruise{id=" + id + ", name='" + name + '\'' + ", participants=[" + participantNames + "]" +
                 ", visitedPorts=[" + visitedPortNames + "]" + ", sailboat=" + sailboatName +
                 ", skipper=" + skipperName +
+                ", createdAt=" + formattedCreatedAt +
+                ", updatedAt=" + formattedUpdatedAt +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.esaillog.sailboat;
+package com.esaillog.sailboat.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Positive;
 import java.util.Set;
 import java.util.UUID;
 
-public record SailboatDto(
+import com.esaillog.sailboat.SailboatType;
+
+public record SailboatResponse(
         UUID id,
         @NotBlank(message = "Name cannot be blank")
         String name,

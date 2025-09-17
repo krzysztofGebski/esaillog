@@ -9,6 +9,7 @@ import org.mapstruct.factory.Mappers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.esaillog.cruise.Cruise;
+import com.esaillog.sailor.dtos.SailorResponse;
 
 class SailorMapperTest {
     private final SailorMapper sailorMapper = Mappers.getMapper(SailorMapper.class);
@@ -29,7 +30,7 @@ class SailorMapperTest {
         sailor.setCruises(Set.of(cruise));
         sailor.setSkipperedCruises(new HashSet<>());
 
-        SailorDto sailorDto = sailorMapper.toSailorDto(sailor);
+        SailorResponse sailorDto = sailorMapper.toSailorDto(sailor);
 
         assertThat(sailorDto).isNotNull();
         assertThat(sailorDto.id()).isEqualTo(sailorId.toString());
@@ -44,33 +45,6 @@ class SailorMapperTest {
     }
 
     @Test
-    void shouldMapSailorDtoToSailor() {
-        UUID sailorId = UUID.randomUUID();
-        UUID cruiseId1 = UUID.randomUUID();
-        UUID cruiseId2 = UUID.randomUUID();
-
-        SailorDto sailorDto = new SailorDto(
-                sailorId.toString(),
-                "Anna",
-                "Nowak",
-                "anna.nowak@example.com",
-                Set.of(cruiseId1, cruiseId2),
-                Set.of(cruiseId1)
-        );
-
-        Sailor sailor = sailorMapper.toSailor(sailorDto);
-
-        assertThat(sailor).isNotNull();
-        assertThat(sailor.getId()).isEqualTo(sailorId);
-        assertThat(sailor.getFirstName()).isEqualTo("Anna");
-        assertThat(sailor.getLastName()).isEqualTo("Nowak");
-        assertThat(sailor.getEmail()).isEqualTo("anna.nowak@example.com");
-
-        assertThat(sailor.getCruises()).isNotNull().isEmpty();
-        assertThat(sailor.getSkipperedCruises()).isNotNull().isEmpty();
-    }
-
-    @Test
     void shouldReturnEmptySetWhenCruisesAreNull() {
         Sailor sailor = new Sailor();
         sailor.setId(UUID.randomUUID());
@@ -80,7 +54,7 @@ class SailorMapperTest {
         sailor.setCruises(null); // Ustawiamy null
         sailor.setSkipperedCruises(null); // Ustawiamy null
 
-        SailorDto sailorDto = sailorMapper.toSailorDto(sailor);
+        SailorResponse sailorDto = sailorMapper.toSailorDto(sailor);
 
         assertThat(sailorDto).isNotNull();
         assertThat(sailorDto.cruisesIds()).isNotNull().isEmpty();
@@ -97,27 +71,10 @@ class SailorMapperTest {
         sailor.setCruises(new HashSet<>());
         sailor.setSkipperedCruises(new HashSet<>());
 
-        SailorDto sailorDto = sailorMapper.toSailorDto(sailor);
+        SailorResponse sailorDto = sailorMapper.toSailorDto(sailor);
 
         assertThat(sailorDto).isNotNull();
         assertThat(sailorDto.id()).isNull();
     }
 
-    @Test
-    void shouldMapSailorDtoToSailorWithNullId() {
-        SailorDto sailorDto = new SailorDto(
-                null,
-                "Anna",
-                "Nowak",
-                "anna.nowak@example.com",
-                Set.of(),
-                Set.of()
-        );
-
-        Sailor sailor = sailorMapper.toSailor(sailorDto);
-
-        assertThat(sailor).isNotNull();
-        assertThat(sailor.getId()).isNull();
-    }
-    
 }

@@ -1,6 +1,7 @@
 package com.esaillog.sailboat;
 
 import com.esaillog.error.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

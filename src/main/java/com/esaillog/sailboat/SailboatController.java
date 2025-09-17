@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.esaillog.sailboat.dtos.SailboatResponse;
+
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -18,23 +20,23 @@ public class SailboatController {
     private final SailboatMapper sailboatMapper;
 
     @GetMapping
-    public ResponseEntity<List<SailboatDto>> getAll() {
-        List<SailboatDto> sailboats = sailboatService.findAll().stream().map(sailboatMapper::toSailboatDto).toList();
+    public ResponseEntity<List<SailboatResponse>> getAll() {
+        List<SailboatResponse> sailboats = sailboatService.findAll().stream().map(sailboatMapper::toSailboatDto).toList();
         return ResponseEntity.ok(sailboats);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SailboatDto> getById(@PathVariable UUID id) {
+    public ResponseEntity<SailboatResponse> getById(@PathVariable UUID id) {
         Sailboat sailboat = sailboatService.findById(id);
-        SailboatDto sailboatDto = sailboatMapper.toSailboatDto(sailboat);
+        SailboatResponse sailboatDto = sailboatMapper.toSailboatDto(sailboat);
         return ResponseEntity.ok(sailboatDto);
     }
 
     @PostMapping()
-    public ResponseEntity<SailboatDto> create(@Valid @RequestBody SailboatDto sailboatDto) {
+    public ResponseEntity<SailboatResponse> create(@Valid @RequestBody SailboatResponse sailboatDto) {
         Sailboat sailboat = sailboatMapper.toSailboat(sailboatDto);
         Sailboat savedSailboat = sailboatService.save(sailboat);
-        SailboatDto savedDto = sailboatMapper.toSailboatDto(savedSailboat);
+        SailboatResponse savedDto = sailboatMapper.toSailboatDto(savedSailboat);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(savedSailboat.getId())
@@ -43,8 +45,8 @@ public class SailboatController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SailboatDto> update(@PathVariable UUID id, @Valid @RequestBody SailboatDto sailboatDto) {
-        SailboatDto updatedDto = sailboatMapper.toSailboatDto(sailboatService.update(id, sailboatMapper.toSailboat(sailboatDto)));
+    public ResponseEntity<SailboatResponse> update(@PathVariable UUID id, @Valid @RequestBody SailboatResponse sailboatDto) {
+        SailboatResponse updatedDto = sailboatMapper.toSailboatDto(sailboatService.update(id, sailboatMapper.toSailboat(sailboatDto)));
         return ResponseEntity.ok(updatedDto);
     }
 

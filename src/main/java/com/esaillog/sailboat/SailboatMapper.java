@@ -11,18 +11,19 @@ import org.mapstruct.Named;
 
 import com.esaillog.cruise.Cruise;
 import com.esaillog.port.Port;
+import com.esaillog.sailboat.dtos.SailboatResponse;
 
 @Mapper(componentModel = "spring")
 public interface SailboatMapper {
     
     @Mapping(source = "cruises", target = "cruiseIds", qualifiedByName = "cruisesToIds")
     @Mapping(source = "homePort", target = "homePortId", qualifiedByName = "portToId")
-    SailboatDto toSailboatDto(Sailboat sailboat);
+    SailboatResponse toSailboatDto(Sailboat sailboat);
 
     @Mapping(target = "homePort", ignore = true)
     @Mapping(target = "cruises", ignore = true)
     @Mapping(target = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Sailboat toSailboat(SailboatDto sailboatDto);
+    Sailboat toSailboat(SailboatResponse sailboatDto);
 
     @Named("cruisesToIds")
     default Set<UUID> cruisesToIds(Set<Cruise> cruises) {
