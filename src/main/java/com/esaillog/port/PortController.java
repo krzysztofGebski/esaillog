@@ -1,51 +1,58 @@
 package com.esaillog.port;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.esaillog.port.dtos.CreatePortRequest;
+import com.esaillog.port.dtos.PortResponse;
+import com.esaillog.port.dtos.UpdatePortRequest;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("ports")
 public class PortController {
     private final PortService portService;
-    private final PortMapper portMapper;
 
     @GetMapping
-    public ResponseEntity<List<PortDto>> getAll() {
-        List<PortDto> ports = portService.findAll().stream().map(portMapper::toPortDto).toList();
-        return ResponseEntity.ok(ports);
+    public ResponseEntity<List<PortResponse>> getAll() {
+        return ResponseEntity.ok(portService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PortDto> getById(@PathVariable UUID id) {
-        Port port = portService.findById(id);
-        PortDto portDto = portMapper.toPortDto(port);
-        return ResponseEntity.ok(portDto);
+    public ResponseEntity<PortResponse> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(portService.findById(id));
     }
 
     @PostMapping()
-    public ResponseEntity<PortDto> create(@Valid @RequestBody PortDto portDto) {
-        Port port = portMapper.toPort(portDto);
-        Port savedPort = portService.save(port);
-        PortDto savedDto = portMapper.toPortDto(savedPort);
+    public ResponseEntity<PortResponse> create(@Valid @RequestBody CreatePortRequest createPortRequest) {
+        PortResponse savedPort = portService.save(createPortRequest);
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedPort.getId())
+                .buildAndExpand(savedPort.id())
                 .toUri();
-        return ResponseEntity.created(location).body(savedDto);
+
+        return ResponseEntity.created(location).body(savedPort);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PortDto> update(@PathVariable UUID id, @Valid @RequestBody PortDto portDto) {
-        PortDto updatedDto = portMapper.toPortDto(portService.update(id, portMapper.toPort(portDto)));
-        return ResponseEntity.ok(updatedDto);
+    public ResponseEntity<PortResponse> update(@PathVariable UUID id, @Valid @RequestBody UpdatePortRequest updatePortRequest) {
+        return ResponseEntity.ok(portService.update(id, updatePortRequest));
     }
 
     @DeleteMapping("/{id}")

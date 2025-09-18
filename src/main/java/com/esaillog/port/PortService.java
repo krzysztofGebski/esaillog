@@ -1,6 +1,10 @@
 package com.esaillog.port;
 
 import com.esaillog.error.EntityNotFoundException;
+import com.esaillog.port.dtos.CreatePortRequest;
+import com.esaillog.port.dtos.PortResponse;
+import com.esaillog.port.dtos.UpdatePortRequest;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,26 +15,30 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PortService {
     private final PortRepository portRepository;
+    private final PortMapper portMapper;
 
-    public List<Port> findAll() {
-        return portRepository.findAll();
+    public List<PortResponse> findAll() {
+        return portRepository.findAll().stream().map(portMapper::toPortDto).toList();        
     }
 
-    public Port findById(UUID id) {
-        return portRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
-    }
-
-    public Port save(Port port) {
-        return portRepository.save(port);
-    }
-
-    public Port update(UUID id, Port updatedPort) {
-        return portRepository.findById(id)
-                .map(existingPort -> {
-                    updatedPort.setId(existingPort.getId());
-                    return portRepository.save(updatedPort);
-                })
+    public PortResponse findById(UUID id) {    
+        Port port = portRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
+        return portMapper.toPortDto(port);
+    }
+
+    public PortResponse save(CreatePortRequest createPortRequest) {
+        Port port = portMapper.createPortFromDto(createPortRequest);
+        Port savedPort = portRepository.save(port);
+        return portMapper.toPortDto(savedPort);
+    }
+
+    public PortResponse update(UUID id, UpdatePortRequest updatePortRequest) {
+        Port existingPort = portRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
+        portMapper.updatePortFromDto(updatePortRequest, existingPort);
+        Port updatedPort = portRepository.save(existingPort);
+        return portMapper.toPortDto(updatedPort);
     }
 
     public void delete(UUID id) {
