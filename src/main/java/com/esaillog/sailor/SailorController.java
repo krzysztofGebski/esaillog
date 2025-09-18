@@ -1,61 +1,59 @@
 package com.esaillog.sailor;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.esaillog.sailor.dtos.CreateSailorRequest;
 import com.esaillog.sailor.dtos.SailorResponse;
 import com.esaillog.sailor.dtos.UpdateSailorRequest;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("sailors")
 public class SailorController {
     private final SailorService sailorService;
-    private final SailorMapper sailorMapper;
 
     @GetMapping
     public ResponseEntity<List<SailorResponse>> getAll() {
-        List<SailorResponse> sailors = sailorService.findAll().stream().map(sailorMapper::toSailorDto).toList();
-        return ResponseEntity.ok(sailors);
+        return ResponseEntity.ok(sailorService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SailorResponse> getById(@PathVariable UUID id) {
-        Sailor sailor = sailorService.findById(id);
-        SailorResponse sailorDto = sailorMapper.toSailorDto(sailor);
-        return ResponseEntity.ok(sailorDto);
+        return ResponseEntity.ok(sailorService.findById(id));
     }
 
     @PostMapping()
     public ResponseEntity<SailorResponse> create(@Valid @RequestBody CreateSailorRequest createSailorRequest) {
-        Sailor sailor = sailorMapper.createSailorFromDto(createSailorRequest);
-        Sailor savedSailor = sailorService.save(sailor);
-        SailorResponse savedSailorDto = sailorMapper.toSailorDto(savedSailor);
+        SailorResponse savedSailor = sailorService.save(createSailorRequest);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedSailor.getId())
+                .buildAndExpand(savedSailor.id())
                 .toUri();
 
-        return ResponseEntity.created(location).body(savedSailorDto);
+        return ResponseEntity.created(location).body(savedSailor);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SailorResponse> update(@PathVariable UUID id, @Valid @RequestBody UpdateSailorRequest updateSailorRequest) {
-        Sailor sailorToUpdate = sailorService.findById(id);
-        sailorMapper.updateSailorFromDto(updateSailorRequest, sailorToUpdate);
-        Sailor updatedSailor = sailorService.save(sailorToUpdate);
-        SailorResponse updatedDto = sailorMapper.toSailorDto(updatedSailor);
-        return ResponseEntity.ok(updatedDto);
+    public ResponseEntity<SailorResponse> update(@PathVariable UUID id,
+            @Valid @RequestBody UpdateSailorRequest updateSailorRequest) {
+        return ResponseEntity.ok(sailorService.update(id, updateSailorRequest));
     }
 
     @DeleteMapping("/{id}")

@@ -1,36 +1,47 @@
 package com.esaillog.sailor;
 
-import com.esaillog.error.EntityNotFoundException;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import com.esaillog.error.EntityNotFoundException;
+import com.esaillog.sailor.dtos.CreateSailorRequest;
+import com.esaillog.sailor.dtos.SailorResponse;
+import com.esaillog.sailor.dtos.UpdateSailorRequest;
+
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class SailorService {
     private final SailorRepository sailorRepository;
+    private final SailorMapper sailorMapper;
 
-    public List<Sailor> findAll() {
-        return sailorRepository.findAll();
+    public List<SailorResponse> findAll() {
+        return sailorRepository.findAll().stream()
+                .map(sailorMapper::toSailorDto)
+                .toList();
     }
 
-    public Sailor findById(UUID id) {
-        return sailorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Sailor not found with id: " + id));
+    public SailorResponse findById(UUID id) {
+        Sailor sailor = sailorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sailor with id " + id + " not found"));
+        return sailorMapper.toSailorDto(sailor);
     }
 
-    public Sailor save(Sailor sailor) {
-        return sailorRepository.save(sailor);
+    public SailorResponse save(CreateSailorRequest createSailorRequest) {
+        Sailor sailor = sailorMapper.createSailorFromDto(createSailorRequest);
+        Sailor savedSailor = sailorRepository.save(sailor);
+        return sailorMapper.toSailorDto(savedSailor);
     }
 
-    public Sailor update(UUID id, Sailor updatedSailor) {
-        return sailorRepository.findById(id)
-                .map(existingSailor -> {
-                    updatedSailor.setId(existingSailor.getId());
-                    return sailorRepository.save(updatedSailor);
-                })
-                .orElseThrow(() -> new EntityNotFoundException("Sailor not found with id: " + id));
+    public SailorResponse update(UUID id, UpdateSailorRequest updateSailorRequest) {
+        Sailor sailorToUpdate = sailorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sailor with id " + id + " not found"));
+        sailorMapper.updateSailorFromDto(updateSailorRequest, sailorToUpdate);
+        Sailor updatedSailor = sailorRepository.save(sailorToUpdate);
+        return sailorMapper.toSailorDto(updatedSailor);
     }
 
     public void delete(UUID id) {

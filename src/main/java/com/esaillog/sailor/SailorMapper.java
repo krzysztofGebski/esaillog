@@ -22,6 +22,7 @@ public interface SailorMapper {
 
         @Mapping(source = "cruises", target = "cruisesIds", qualifiedByName = "cruisesToIds")
         @Mapping(source = "skipperedCruises", target = "skipperedCruisesIds", qualifiedByName = "cruisesToIds")
+        @Mapping(source = "updatedAt", target = "updatedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'")
         SailorResponse toSailorDto(Sailor sailor);
 
         @Mapping(target = "id", ignore = true)
