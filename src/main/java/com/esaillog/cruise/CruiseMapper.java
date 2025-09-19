@@ -9,6 +9,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import com.esaillog.cruise.dtos.CruiseResponse;
 import com.esaillog.port.Port;
 import com.esaillog.sailor.Sailor;
 
@@ -19,14 +20,14 @@ public interface CruiseMapper {
     @Mapping(source = "visitedPorts", target = "visitedPortsIds", qualifiedByName = "portsToIds")
     @Mapping(source = "sailboat", target = "sailboatId", qualifiedByName = "sailboatToId")
     @Mapping(source = "skipper", target = "skipperId", qualifiedByName = "sailorToId")
-    CruiseDto toCruiseDto(Cruise cruise);
+    CruiseResponse toCruiseDto(Cruise cruise);
 
     @Mapping(target = "participants", ignore = true)
     @Mapping(target = "visitedPorts", ignore = true)
     @Mapping(target = "sailboat", ignore = true)
     @Mapping(target = "skipper", ignore = true)
     @Mapping(target = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Cruise toCruise(CruiseDto cruiseDto);
+    Cruise toCruise(CruiseResponse cruiseDto);
 
     @Named("sailorsToIds")
     default Set<UUID> sailorsToIds(Set<Sailor> sailors) {
