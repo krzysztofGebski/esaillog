@@ -8,7 +8,6 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
@@ -20,8 +19,8 @@ import com.esaillog.sailor.dtos.UpdateSailorRequest;
 @Mapper(componentModel = "spring")
 public interface SailorMapper {
 
-        @Mapping(source = "cruises", target = "cruisesIds", qualifiedByName = "cruisesToIds")
-        @Mapping(source = "skipperedCruises", target = "skipperedCruisesIds", qualifiedByName = "cruisesToIds")
+        @Mapping(source = "cruises", target = "cruisesIds")
+        @Mapping(source = "skipperedCruises", target = "skipperedCruisesIds")
         @Mapping(source = "updatedAt", target = "updatedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'")
         SailorResponse toSailorDto(Sailor sailor);
 
@@ -33,9 +32,8 @@ public interface SailorMapper {
         Sailor createSailorFromDto(CreateSailorRequest createSailorRequest);
 
         @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-        Sailor updateSailorFromDto(UpdateSailorRequest updateSailorRequest, @MappingTarget Sailor sailor);
+        void updateSailorFromDto(UpdateSailorRequest updateSailorRequest, @MappingTarget Sailor sailor);
 
-        @Named("cruisesToIds")
         default Set<UUID> cruisesToIds(Set<Cruise> cruises) {
                 if (cruises == null) {
                         return Set.of();

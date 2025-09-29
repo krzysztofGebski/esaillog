@@ -14,21 +14,30 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CruiseService {
     private final CruiseRepository cruiseRepository;
+    private final CruiseMapper cruiseMapper;
 
     public List<CruiseResponse> findAll() {
-        return List.of();
+        return cruiseRepository.findAll().stream().map(cruiseMapper::toCruiseDto).toList();
     }
 
     public CruiseResponse findById(UUID id) {
-        return null;
+        Cruise cruise = cruiseRepository.findById(id)
+                                        .orElseThrow(() -> new EntityNotFoundException("Cruise with id " + id + " not found"));
+        return cruiseMapper.toCruiseDto(cruise);
     }
 
     public CruiseResponse save(CreateCruiseRequest createCruiseRequest) {
-        return null;
+        Cruise cruise = cruiseMapper.createCruiseFromDto(createCruiseRequest);
+        Cruise savedCruise = cruiseRepository.save(cruise);
+        return cruiseMapper.toCruiseDto(savedCruise);
     }
 
     public CruiseResponse update(UUID id, UpdateCruiseRequest updateCruiseRequest) {
-        return null;
+        Cruise cruiseToUpdate = cruiseRepository.findById(id)
+                                                .orElseThrow(() -> new EntityNotFoundException("Cruise with id " + id + " not found"));
+        cruiseMapper.updateCruiseFromDto(updateCruiseRequest, cruiseToUpdate);
+        Cruise updatedCruise = cruiseRepository.save(cruiseToUpdate);
+        return cruiseMapper.toCruiseDto(updatedCruise);
     }
 
     public void delete(UUID id) {
