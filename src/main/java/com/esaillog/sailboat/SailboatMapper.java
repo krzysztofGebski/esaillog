@@ -32,7 +32,7 @@ public interface SailboatMapper {
     Sailboat createSailboatFromDto(CreateSailboatRequest createSailboatRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
-    Sailboat updateSailboatFromDto(UpdateSailboatRequest updateSailboatRequest, @MappingTarget Sailboat sailboat);
+    void updateSailboatFromDto(UpdateSailboatRequest updateSailboatRequest, @MappingTarget Sailboat sailboat);
 
     @Named("portToId")
     default UUID portToId(Port port) {

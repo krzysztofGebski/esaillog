@@ -4,10 +4,7 @@ import com.esaillog.port.Port;
 import com.esaillog.sailboat.Sailboat;
 import com.esaillog.sailor.Sailor;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,30 +21,23 @@ import java.util.stream.Collectors;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 public class Cruise {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
     @ManyToMany
-    @JoinTable(
-            name = "cruise_sailor",
-            joinColumns = @JoinColumn(name = "cruise_id"),
-            inverseJoinColumns = @JoinColumn(name = "sailor_id")
-    )
-    private Set<Sailor> participants = new HashSet<>();
+    @JoinTable(name = "cruise_sailor", joinColumns = @JoinColumn(name = "cruise_id"), inverseJoinColumns = @JoinColumn(name = "sailor_id"))
+    private Set<Sailor> participants;
+    @OneToOne
+    private Port startPort;
+    @OneToOne
+    private Port endPort;
     @ManyToMany
-    @JoinTable(
-            name = "cruise_port",
-            joinColumns = @JoinColumn(name = "cruise_id"),
-            inverseJoinColumns = @JoinColumn(name = "port_id")
-    )
-    private Set<Port> visitedPorts = new HashSet<>();
+    @JoinTable(name = "cruise_port", joinColumns = @JoinColumn(name = "cruise_id"), inverseJoinColumns = @JoinColumn(name = "port_id"))
+    private Set<Port> visitedPorts;
     @ManyToOne
     @JoinColumn(name = "sailboat_id")
     private Sailboat sailboat;
@@ -61,38 +51,60 @@ public class Cruise {
     @Column(nullable = false)
     private Instant updatedAt;
 
+    public Cruise() {
+        this.participants = new HashSet<>();
+        this.visitedPorts = new HashSet<>();
+    }
+
+    public void addParticipant(Sailor sailor) {
+        this.participants.add(sailor);
+    }
+
+    public void removeParticipant(Sailor sailor) {
+        this.participants.remove(sailor);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
+        Cruise cruise = (Cruise) o;
+        return id != null && id.equals(cruise.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
     @Override
     public String toString() {
-        String sailboatName = (sailboat != null && Hibernate.isInitialized(sailboat))
-                ? sailboat.getName()
-                : "null or uninitialized";
+        String sailboatName = (sailboat != null && Hibernate.isInitialized(sailboat)) ? sailboat.getName() : "null or uninitialized";
 
-        String participantNames = (participants != null && Hibernate.isInitialized(participants))
-                ? participants.stream()
-                .map(s -> s.getFirstName() + " " + s.getLastName())
-                .collect(Collectors.joining(", "))
-                : "[lazy or uninitialized]";
+        String participantNames = (participants != null && Hibernate.isInitialized(participants)) ? participants.stream()
+                                                                                                                .map(s -> s.getFirstName()
+                                                                                                                        + " "
+                                                                                                                        + s.getLastName())
+                                                                                                                .collect(Collectors.joining(", ")) : "[lazy or uninitialized]";
 
-        String visitedPortNames = (visitedPorts != null && Hibernate.isInitialized(visitedPorts))
-                ? visitedPorts.stream()
-                .map(Port::getName)
-                .collect(Collectors.joining(", "))
-                : "[lazy or uninitialized]";
-        
-        String skipperName = (skipper != null && Hibernate.isInitialized(skipper))
-                ? skipper.getFirstName() + " " + skipper.getLastName()
-                : "null or uninitialized";
+        String visitedPortNames = (visitedPorts != null && Hibernate.isInitialized(visitedPorts)) ? visitedPorts.stream()
+                                                                                                                .map(Port::getName)
+                                                                                                                .collect(Collectors.joining(", ")) : "[lazy or uninitialized]";
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+        String skipperName = (skipper != null && Hibernate.isInitialized(skipper)) ?
+                skipper.getFirstName() + " " + skipper.getLastName() : "null or uninitialized";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                                                       .withZone(ZoneId.systemDefault());
 
         String formattedCreatedAt = (createdAt != null) ? formatter.format(createdAt) : "null";
         String formattedUpdatedAt = (updatedAt != null) ? formatter.format(updatedAt) : "null";
 
-        return "Cruise{id=" + id + ", name='" + name + '\'' + ", participants=[" + participantNames + "]" +
-                ", visitedPorts=[" + visitedPortNames + "]" + ", sailboat=" + sailboatName +
-                ", skipper=" + skipperName +
-                ", createdAt=" + formattedCreatedAt +
-                ", updatedAt=" + formattedUpdatedAt +
-                '}';
+        return "Cruise{id=" + id + ", name='" + name + '\'' + ", participants=[" + participantNames + "]" + ", visitedPorts=["
+                + visitedPortNames + "]" + ", sailboat=" + sailboatName + ", skipper=" + skipperName + ", createdAt=" + formattedCreatedAt
+                + ", updatedAt=" + formattedUpdatedAt + '}';
     }
 }

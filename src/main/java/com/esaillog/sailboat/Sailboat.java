@@ -2,12 +2,8 @@ package com.esaillog.sailboat;
 
 import com.esaillog.cruise.Cruise;
 import com.esaillog.port.Port;
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,11 +20,8 @@ import java.util.stream.Collectors;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 public class Sailboat {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,13 +36,30 @@ public class Sailboat {
     private double length;
     private double engineKW;
     @OneToMany(mappedBy = "sailboat")
-    private Set<Cruise> cruises = new HashSet<>();
+    private Set<Cruise> cruises;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
     @LastModifiedDate
     @Column(nullable = false)
     private Instant updatedAt;
+
+    public Sailboat() {
+        this.cruises = new HashSet<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Sailboat sailboat = (Sailboat) o;
+        return id != null && id.equals(sailboat.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
     @Override
     public String toString() {

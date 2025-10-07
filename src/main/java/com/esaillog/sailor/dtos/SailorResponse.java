@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public record SailorResponse(
-        String id,
+        UUID id,
         String firstName,
         String lastName,
         String email,

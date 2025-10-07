@@ -11,6 +11,10 @@ public record UpdateCruiseRequest(
         @NotBlank(message = "Name cannot be blank")
         String name,
         Set<UUID> participantsIds,
+        @NotBlank(message = "Start port ID cannot be blank")
+        UUID startPortId,
+        @NotBlank(message = "End port ID cannot be blank")
+        UUID endPortId,
         Set<UUID> visitedPortsIds,
         @NotBlank(message = "Sailboat ID cannot be blank")
         UUID sailboatId,
