@@ -1,7 +1,6 @@
 package com.esaillog.port;
 
 import com.esaillog.cruise.Cruise;
-import com.esaillog.sailboat.Sailboat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -26,17 +25,15 @@ import java.util.stream.Collectors;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
 public class Port implements Persistable<UUID> {
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                                                                                 .withZone(ZoneId.systemDefault());
     @Id
     @EqualsAndHashCode.Include
-    @Getter
     private UUID id;
-    @Getter
     private String name;
-    @Getter
     private String description;
-    @OneToMany(mappedBy = "homePort", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<Sailboat> sailboats = new HashSet<>();
     @ManyToMany(mappedBy = "visitedPorts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Cruise> cruises = new HashSet<>();
     @CreatedDate
@@ -57,10 +54,6 @@ public class Port implements Persistable<UUID> {
         this.description = description;
     }
 
-    public Set<Sailboat> getSailboats() {
-        return Collections.unmodifiableSet(sailboats);
-    }
-
     public Set<Cruise> getCruises() {
         return Collections.unmodifiableSet(cruises);
     }
@@ -72,28 +65,24 @@ public class Port implements Persistable<UUID> {
         if (!StringUtils.hasText(description)) {
             throw new IllegalArgumentException("Description cannot be null or blank.");
         }
-    }
-
-    public void addSailboat(Sailboat sailboat) {
-        sailboats.add(sailboat);
-        sailboat.setHomePort(this);
-    }
-
-    public void removeSailboat(Sailboat sailboat) {
-        sailboats.remove(sailboat);
-        sailboat.setHomePort(null);
+        this.name = name;
+        this.description = description;
     }
 
     public void addCruise(Cruise cruise) {
-        cruises.add(cruise);
-        cruise.getVisitedPorts()
-              .add(this);
+        if (cruise == null || this.cruises.contains(cruise)) {
+            return;
+        }
+        this.cruises.add(cruise);
+        cruise.addVisitedPort(this);
     }
 
     public void removeCruise(Cruise cruise) {
-        cruises.remove(cruise);
-        cruise.getVisitedPorts()
-              .remove(this);
+        if (cruise == null || !this.cruises.contains(cruise)) {
+            return;
+        }
+        this.cruises.remove(cruise);
+        cruise.removeVisitedPort(this);
     }
 
     @Transient
@@ -104,14 +93,12 @@ public class Port implements Persistable<UUID> {
 
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                                                       .withZone(ZoneId.systemDefault());
 
-        String formattedCreatedAt = (createdAt != null) ? formatter.format(createdAt) : "null";
-        String formattedUpdatedAt = (updatedAt != null) ? formatter.format(updatedAt) : "null";
+        String formattedCreatedAt = (createdAt != null) ? DATE_TIME_FORMATTER.format(createdAt) : "null";
+        String formattedUpdatedAt = (updatedAt != null) ? DATE_TIME_FORMATTER.format(updatedAt) : "null";
 
-        return "Port{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", sailboats=" + formatSailboatNames(sailboats) +
-                ", cruises=" + formatCruiseNames(cruises) + ", createdAt=" + formattedCreatedAt + ", updatedAt=" + formattedUpdatedAt + '}';
+        return "Port{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", cruises="
+                + formatCruiseNames(cruises) + ", createdAt=" + formattedCreatedAt + ", updatedAt=" + formattedUpdatedAt + '}';
     }
 
     private String formatCruiseNames(Set<Cruise> cruiseSet) {
@@ -124,17 +111,5 @@ public class Port implements Persistable<UUID> {
         return cruiseSet.stream()
                         .map(Cruise::getName)
                         .collect(Collectors.joining(", ", "[", "]"));
-    }
-
-    private String formatSailboatNames(Set<Sailboat> sailboatSet) {
-        if (sailboatSet == null) {
-            return "null";
-        }
-        if (sailboatSet.isEmpty()) {
-            return "[]";
-        }
-        return sailboatSet.stream()
-                          .map(Sailboat::getName)
-                          .collect(Collectors.joining(", ", "[", "]"));
     }
 }

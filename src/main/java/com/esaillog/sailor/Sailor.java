@@ -27,16 +27,15 @@ import java.util.stream.Collectors;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
 public class Sailor implements Persistable<UUID> {
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                                                                                 .withZone(ZoneId.systemDefault());
     @Id
     @EqualsAndHashCode.Include
-    @Getter
     private UUID id;
-    @Getter
     private String firstName;
-    @Getter
     private String lastName;
-    @Getter
     private String email;
     @ManyToMany(mappedBy = "participants", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Cruise> cruises = new HashSet<>();
@@ -44,14 +43,11 @@ public class Sailor implements Persistable<UUID> {
     private Set<Cruise> skipperedCruises = new HashSet<>();
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    @Getter
     private Instant createdAt;
     @LastModifiedDate
     @Column(nullable = false)
-    @Getter
     private Instant updatedAt;
     @Version
-    @Getter
     private Long version;
 
     /**
@@ -132,7 +128,10 @@ public class Sailor implements Persistable<UUID> {
      * @param cruise the cruise to add.
      */
     public void addCruise(Cruise cruise) {
-        cruises.add(cruise);
+        if (cruise == null || this.cruises.contains(cruise)) {
+            return; // Guard clause to prevent recursion and nulls
+        }
+        this.cruises.add(cruise);
         cruise.addParticipant(this);
     }
 
@@ -143,7 +142,10 @@ public class Sailor implements Persistable<UUID> {
      * @param cruise the cruise to remove.
      */
     public void removeCruise(Cruise cruise) {
-        cruises.remove(cruise);
+        if (cruise == null || !this.cruises.contains(cruise)) {
+            return; // Guard clause
+        }
+        this.cruises.remove(cruise);
         cruise.removeParticipant(this);
     }
 
@@ -154,8 +156,9 @@ public class Sailor implements Persistable<UUID> {
      * @param cruise the cruise to add.
      */
     public void addSkipperedCruise(Cruise cruise) {
-        skipperedCruises.add(cruise);
-        cruise.setSkipper(this);
+        // This method should only manage this side of the relationship.
+        // The Cruise entity is responsible for setting the skipper.
+        this.skipperedCruises.add(cruise);
     }
 
     /**
@@ -165,8 +168,9 @@ public class Sailor implements Persistable<UUID> {
      * @param cruise the cruise to remove.
      */
     public void removeSkipperedCruise(Cruise cruise) {
-        skipperedCruises.remove(cruise);
-        cruise.setSkipper(null);
+        // This method should only manage this side of the relationship.
+        // The Cruise entity is responsible for un-setting the skipper.
+        this.skipperedCruises.remove(cruise);
     }
 
     /**
@@ -188,11 +192,9 @@ public class Sailor implements Persistable<UUID> {
      */
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                                                       .withZone(ZoneId.systemDefault());
 
-        String formattedCreatedAt = (createdAt != null) ? formatter.format(createdAt) : "null";
-        String formattedUpdatedAt = (updatedAt != null) ? formatter.format(updatedAt) : "null";
+        String formattedCreatedAt = (createdAt != null) ? DATE_TIME_FORMATTER.format(createdAt) : "null";
+        String formattedUpdatedAt = (updatedAt != null) ? DATE_TIME_FORMATTER.format(updatedAt) : "null";
 
         return "Sailor{" + "id=" + id + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email + '\''
                 + ", cruises=" + formatCruiseNames(cruises) + ", skipperedCruises=" + formatCruiseNames(skipperedCruises) + ", createdAt="

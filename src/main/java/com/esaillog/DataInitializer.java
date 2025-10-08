@@ -4,6 +4,7 @@ import com.esaillog.cruise.Cruise;
 import com.esaillog.cruise.CruiseRepository;
 import com.esaillog.port.Port;
 import com.esaillog.sailboat.Sailboat;
+import com.esaillog.sailboat.SailboatType;
 import com.esaillog.sailor.Sailor;
 import com.esaillog.sailor.SailorRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +30,18 @@ public class DataInitializer implements CommandLineRunner {
         sailorRepository.save(secondSailor);
         sailorRepository.save(thirdSailor);
 
-        Cruise firstCruise = new Cruise();
+        Sailboat sailboat = new Sailboat("Critter", "POL123", SailboatType.SLOOP, 35, 45);
+
+        Cruise firstCruise = new Cruise("Baltic cruise 2024", sailboat);
         Port startPort = new Port("Gdynia", "Marina Gdynia");
         Port endPort = new Port("Hel", "Marina Hel");
 
-        Sailboat sailboat = new Sailboat();
-        sailboat.setName("Critter");
 
-        firstCruise.setName("Baltic cruise 2025");
         firstCruise.setSkipper(firstSailor);
         firstCruise.addParticipant(firstSailor);
         firstCruise.addParticipant(secondSailor);
         firstCruise.addParticipant(thirdSailor);
-        firstCruise.setStartPort(startPort);
-        firstCruise.setEndPort(endPort);
+        firstCruise.setStartAndEndPorts(startPort, endPort);
         firstCruise.setSailboat(sailboat);
 
 
