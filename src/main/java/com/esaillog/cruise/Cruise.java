@@ -77,8 +77,8 @@ public class Cruise implements Persistable<UUID> {
      */
     public Cruise(String name, Sailboat sailboat) {
         this.id = UUID.randomUUID();
-        this.name = name;
-        this.sailboat = sailboat;
+        updateName(name);
+        setSailboat(sailboat);
     }
 
     /**
@@ -254,8 +254,8 @@ public class Cruise implements Persistable<UUID> {
     }
 
     private String formatParticipantsNames(Set<Sailor> sailors) {
-        if (sailors == null) {
-            return "null";
+        if (!Hibernate.isInitialized(sailors)) {
+            return "[uninitialized]";
         }
         if (sailors.isEmpty()) {
             return "[]";
@@ -266,8 +266,8 @@ public class Cruise implements Persistable<UUID> {
     }
 
     private String formatVisitedPortNames(Set<Port> ports) {
-        if (ports == null) {
-            return "null";
+        if (!Hibernate.isInitialized(ports)) {
+            return "[uninitialized]";
         }
         if (ports.isEmpty()) {
             return "[]";
