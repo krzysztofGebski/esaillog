@@ -23,6 +23,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a cruise, which is a central entity in the domain model.
+ * <p>
+ * A cruise holds information about its participants, visited ports, the sailboat used,
+ * and the skipper. It is the owning side for all its relationships.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -63,12 +69,24 @@ public class Cruise implements Persistable<UUID> {
     private Long version;
 
 
+    /**
+     * Constructs a new Cruise with a given name and sailboat.
+     *
+     * @param name     The name of the cruise.
+     * @param sailboat The sailboat assigned to the cruise.
+     */
     public Cruise(String name, Sailboat sailboat) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.sailboat = sailboat;
     }
 
+    /**
+     * Updates the name of the cruise.
+     *
+     * @param newName The new name for the cruise.
+     * @throws IllegalArgumentException if the new name is null or blank.
+     */
     public void updateName(String newName) {
         if (!StringUtils.hasText(newName)) {
             throw new IllegalArgumentException("Name cannot be null or blank.");
@@ -76,55 +94,106 @@ public class Cruise implements Persistable<UUID> {
         this.name = newName;
     }
 
+    /**
+     * Adds a sailor to the cruise participants.
+     * This method ensures the bidirectional relationship is consistent by adding the cruise
+     * to the sailor's set of cruises.
+     *
+     * @param sailor The sailor to add as a participant.
+     */
     public void addParticipant(Sailor sailor) {
         if (sailor == null || this.participants.contains(sailor)) {
-            return; // Guard clause to prevent recursion and nulls
+            return;
         }
         this.participants.add(sailor);
         sailor.addCruise(this);
     }
 
+    /**
+     * Removes a sailor from the cruise participants.
+     * This method ensures the bidirectional relationship is consistent by removing the cruise
+     * from the sailor's set of cruises.
+     *
+     * @param sailor The sailor to remove from participants.
+     */
     public void removeParticipant(Sailor sailor) {
         if (sailor == null || !this.participants.contains(sailor)) {
-            return; // Guard clause
+            return;
         }
         this.participants.remove(sailor);
         sailor.removeCruise(this);
     }
 
+    /**
+     * Adds a collection of sailors to the cruise participants.
+     *
+     * @param participants A set of sailors to add.
+     */
     public void addParticipants(Set<Sailor> participants) {
         if (participants != null) {
             participants.forEach(this::addParticipant);
         }
     }
 
+    /**
+     * Sets the start and end ports for the cruise.
+     *
+     * @param startPort The port where the cruise begins.
+     * @param endPort   The port where the cruise ends.
+     */
     public void setStartAndEndPorts(Port startPort, Port endPort) {
         this.startPort = startPort;
         this.endPort = endPort;
     }
 
+    /**
+     * Adds a port to the list of visited ports during the cruise.
+     * This method ensures the bidirectional relationship is consistent by adding this cruise
+     * to the port's set of cruises.
+     *
+     * @param port The port that was visited.
+     */
     public void addVisitedPort(Port port) {
         if (port == null || this.visitedPorts.contains(port)) {
-            return; // Assuming Port has a similar bidirectional setup
+            return;
         }
         this.visitedPorts.add(port);
         port.addCruise(this);
     }
 
+    /**
+     * Removes a port from the list of visited ports.
+     * This method ensures the bidirectional relationship is consistent by removing this cruise
+     * from the port's set of cruises.
+     *
+     * @param port The port to remove from the visited list.
+     */
     public void removeVisitedPort(Port port) {
         if (port == null || !this.visitedPorts.contains(port)) {
-            return; // Assuming Port has a similar bidirectional setup
+            return;
         }
         this.visitedPorts.remove(port);
         port.removeCruise(this);
     }
 
+    /**
+     * Adds a collection of ports to the list of visited ports.
+     *
+     * @param ports A set of ports to add.
+     */
     public void addVisitedPorts(Set<Port> ports) {
         if (ports != null) {
             ports.forEach(this::addVisitedPort);
         }
     }
 
+    /**
+     * Sets or updates the sailboat for the cruise.
+     * This method correctly manages the bidirectional relationship by removing the cruise
+     * from the old sailboat (if any) and adding it to the new one.
+     *
+     * @param newSailboat The new sailboat for the cruise.
+     */
     public void setSailboat(Sailboat newSailboat) {
         if (this.sailboat != null) {
             this.sailboat.removeCruise(this);
@@ -135,6 +204,13 @@ public class Cruise implements Persistable<UUID> {
         }
     }
 
+    /**
+     * Sets or updates the skipper for the cruise.
+     * This method correctly manages the bidirectional relationship by removing this cruise
+     * from the old skipper's set of skippered cruises (if any) and adding it to the new one.
+     *
+     * @param newSkipper The new skipper for the cruise.
+     */
     public void setSkipper(Sailor newSkipper) {
         if (this.skipper != null) {
             this.skipper.removeSkipperedCruise(this);
@@ -145,13 +221,23 @@ public class Cruise implements Persistable<UUID> {
         }
     }
 
+    /**
+     * Checks if the entity is new or has been persisted before.
+     * This is used by Spring Data JPA to determine whether to call persist or merge.
+     *
+     * @return {@code true} if the entity is new (version is null), {@code false} otherwise.
+     */
     @Transient
     @Override
     public boolean isNew() {
         return this.version == null;
     }
 
-
+    /**
+     * Returns a string representation of the cruise, including its name, participants, visited ports,
+     * sailboat, skipper, and audit dates.
+     * @return A string summary of the cruise.
+     */
     @Override
     public String toString() {
 

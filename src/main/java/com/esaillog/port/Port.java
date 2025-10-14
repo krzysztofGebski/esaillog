@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
@@ -21,6 +22,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a port that can be a start/end point for a cruise or a visited location.
+ * <p>
+ * This entity holds information about a specific port and is the non-owning side
+ * of the relationship with the {@link Cruise} entity.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -69,20 +76,29 @@ public class Port implements Persistable<UUID> {
         this.description = description;
     }
 
+    /**
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method for maintaining the bidirectional relationship.
+     * It only synchronizes the state in memory and <strong>does not</strong> persist the relationship to the database.
+     * The relationship is owned by the {@link Cruise} entity.
+     * <p>
+     * To correctly add a visited port to a cruise, always call {@link Cruise#addVisitedPort(Port)}.
+     *
+     * @param cruise the cruise to add.
+     */
     public void addCruise(Cruise cruise) {
-        if (cruise == null || this.cruises.contains(cruise)) {
-            return;
-        }
         this.cruises.add(cruise);
-        cruise.addVisitedPort(this);
     }
 
+    /**
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method. To correctly remove a visited port,
+     * always call {@link Cruise#removeVisitedPort(Port)}.
+     *
+     * @param cruise the cruise to remove.
+     */
     public void removeCruise(Cruise cruise) {
-        if (cruise == null || !this.cruises.contains(cruise)) {
-            return;
-        }
         this.cruises.remove(cruise);
-        cruise.removeVisitedPort(this);
     }
 
     @Transient
@@ -102,8 +118,8 @@ public class Port implements Persistable<UUID> {
     }
 
     private String formatCruiseNames(Set<Cruise> cruiseSet) {
-        if (cruiseSet == null) {
-            return "null";
+        if (!Hibernate.isInitialized(cruiseSet)) {
+            return "[uninitialized]";
         }
         if (cruiseSet.isEmpty()) {
             return "[]";

@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
@@ -23,6 +24,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a sailor who can participate in or skipper a cruise.
+ * <p>
+ * This entity holds personal information about the sailor and maintains relationships
+ * to the cruises they are associated with. It is the non-owning side of the relationships.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -123,53 +130,52 @@ public class Sailor implements Persistable<UUID> {
 
     /**
      * Adds a cruise to the set of cruises this sailor has participated in.
-     * This method maintains the bidirectional relationship between Sailor and Cruise.
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method for maintaining the bidirectional relationship.
+     * It only synchronizes the state in memory and <strong>does not</strong> persist the relationship to the database.
+     * The relationship is owned by the {@link Cruise} entity.
+     * <p>
+     * To correctly add a participant to a cruise, always call {@link Cruise#addParticipant(Sailor)}.
      *
      * @param cruise the cruise to add.
      */
     public void addCruise(Cruise cruise) {
-        if (cruise == null || this.cruises.contains(cruise)) {
-            return; // Guard clause to prevent recursion and nulls
-        }
         this.cruises.add(cruise);
-        cruise.addParticipant(this);
     }
 
     /**
      * Removes a cruise from the set of cruises this sailor has participated in.
-     * This method maintains the bidirectional relationship between Sailor and Cruise.
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method. To correctly remove a participant,
+     * always call {@link Cruise#removeParticipant(Sailor)}.
      *
      * @param cruise the cruise to remove.
      */
     public void removeCruise(Cruise cruise) {
-        if (cruise == null || !this.cruises.contains(cruise)) {
-            return; // Guard clause
-        }
         this.cruises.remove(cruise);
-        cruise.removeParticipant(this);
     }
 
     /**
      * Adds a cruise to the set of cruises this sailor has skippered.
-     * This method maintains the bidirectional relationship by setting this sailor as the skipper on the cruise.
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method. To correctly set a skipper,
+     * always call {@link Cruise#setSkipper(Sailor)}.
      *
      * @param cruise the cruise to add.
      */
     public void addSkipperedCruise(Cruise cruise) {
-        // This method should only manage this side of the relationship.
-        // The Cruise entity is responsible for setting the skipper.
         this.skipperedCruises.add(cruise);
     }
 
     /**
      * Removes a cruise from the set of cruises this sailor has skippered.
-     * This method maintains the bidirectional relationship by removing the skipper from the cruise.
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method. To correctly change or remove a skipper,
+     * always call {@link Cruise#setSkipper(Sailor)}.
      *
      * @param cruise the cruise to remove.
      */
     public void removeSkipperedCruise(Cruise cruise) {
-        // This method should only manage this side of the relationship.
-        // The Cruise entity is responsible for un-setting the skipper.
         this.skipperedCruises.remove(cruise);
     }
 
@@ -209,8 +215,8 @@ public class Sailor implements Persistable<UUID> {
      * @return a string representation of cruise names, e.g., "[Cruise A, Cruise B]".
      */
     private String formatCruiseNames(Set<Cruise> cruiseSet) {
-        if (cruiseSet == null) {
-            return "null";
+        if (!Hibernate.isInitialized(cruiseSet)) {
+            return "[uninitialized]";
         }
         if (cruiseSet.isEmpty()) {
             return "[]";

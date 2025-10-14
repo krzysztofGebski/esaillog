@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
@@ -117,25 +118,28 @@ public class Sailboat implements Persistable<UUID> {
 
     /**
      * Adds a cruise to this sailboat and establishes a bidirectional relationship.
-     * This method should be the single point of entry for associating a cruise with a sailboat.
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method for maintaining the bidirectional relationship.
+     * It only synchronizes the state in memory and <strong>does not</strong> persist the relationship to the database.
+     * The relationship is owned by the {@link Cruise} entity.
+     * <p>
+     * To correctly associate a cruise with a sailboat, always call {@link Cruise#setSailboat(Sailboat)}.
      *
      * @param cruise The {@link Cruise} to add. Must not be null.
      */
     public void addCruise(Cruise cruise) {
-        // This method should only manage this side of the relationship.
-        // The Cruise entity is responsible for setting the sailboat.
         this.cruises.add(cruise);
     }
 
     /**
      * Removes a cruise from this sailboat and breaks the bidirectional relationship.
-     * Due to {@code orphanRemoval = true}, this will also trigger the deletion of the cruise from the database.
+     * <p>
+     * <strong>WARNING:</strong> This is a helper method. To correctly change the sailboat for a cruise,
+     * always call {@link Cruise#setSailboat(Sailboat)}.
      *
      * @param cruise The {@link Cruise} to remove.
      */
     public void removeCruise(Cruise cruise) {
-        // This method should only manage this side of the relationship.
-        // The Cruise entity is responsible for un-setting the sailboat.
         cruises.remove(cruise);
     }
 
@@ -174,8 +178,8 @@ public class Sailboat implements Persistable<UUID> {
      * @return a string representation of cruise names, e.g., "[Cruise A, Cruise B]".
      */
     private String formatCruiseNames(Set<Cruise> cruiseSet) {
-        if (cruiseSet == null) {
-            return "null";
+        if (!Hibernate.isInitialized(cruiseSet)) {
+            return "[uninitialized]";
         }
         if (cruiseSet.isEmpty()) {
             return "[]";
