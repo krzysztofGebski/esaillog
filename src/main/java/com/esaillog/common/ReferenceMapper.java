@@ -35,6 +35,13 @@ public class ReferenceMapper {
         return new HashSet<>(portRepository.findAllById(portIds));
     }
 
+    public Port toPort(UUID portId) {
+        if (portId == null) {
+            return null;
+        }
+        return portRepository.findById(portId).orElseThrow(() -> new EntityNotFoundException("Port with id " + portId + " not found."));
+    }
+
     public Sailboat toSailboat(UUID sailboatId) {
         if (sailboatId == null) {
             return null;

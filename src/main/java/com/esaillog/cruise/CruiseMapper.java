@@ -3,10 +3,12 @@ package com.esaillog.cruise;
 import com.esaillog.common.ReferenceMapper;
 import com.esaillog.cruise.dtos.CreateCruiseRequest;
 import com.esaillog.cruise.dtos.CruiseResponse;
-import com.esaillog.cruise.dtos.UpdateCruiseRequest;
 import com.esaillog.port.Port;
 import com.esaillog.sailor.Sailor;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.Set;
 import java.util.UUID;
@@ -26,9 +28,6 @@ public interface CruiseMapper {
     @Mapping(source = "sailboatId", target = "sailboat")
     @Mapping(source = "skipperId", target = "skipper")
     Cruise createCruiseFromDto(CreateCruiseRequest createCruiseRequest);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateCruiseFromDto(UpdateCruiseRequest updateCruiseRequest, @MappingTarget Cruise cruise);
 
 
     @Named("sailorsToIds")

@@ -1,6 +1,7 @@
 package com.esaillog.port;
 
 import com.esaillog.cruise.Cruise;
+import com.esaillog.port.dtos.UpdatePortRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -63,6 +64,21 @@ public class Port implements Persistable<UUID> {
 
     public Set<Cruise> getCruises() {
         return Collections.unmodifiableSet(cruises);
+    }
+
+    /**
+     * Updates the port's details from a data transfer object.
+     * It selectively updates fields that are provided (not null or blank).
+     *
+     * @param request The DTO containing new data for the port.
+     */
+    public void update(UpdatePortRequest request) {
+        if (StringUtils.hasText(request.name())) {
+            this.name = request.name();
+        }
+        if (StringUtils.hasText(request.description())) {
+            this.description = request.description();
+        }
     }
 
     public void updateNameAndDescription(String name, String description) {

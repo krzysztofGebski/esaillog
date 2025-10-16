@@ -3,8 +3,9 @@ package com.esaillog.sailor;
 import com.esaillog.cruise.Cruise;
 import com.esaillog.sailor.dtos.CreateSailorRequest;
 import com.esaillog.sailor.dtos.SailorResponse;
-import com.esaillog.sailor.dtos.UpdateSailorRequest;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.Set;
 import java.util.UUID;
@@ -18,9 +19,6 @@ public interface SailorMapper {
     SailorResponse toSailorDto(Sailor sailor);
 
     Sailor createSailorFromDto(CreateSailorRequest createSailorRequest);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateSailorFromDto(UpdateSailorRequest updateSailorRequest, @MappingTarget Sailor sailor);
 
     default Set<UUID> cruisesToIds(Set<Cruise> cruises) {
         if (cruises == null) {

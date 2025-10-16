@@ -3,8 +3,9 @@ package com.esaillog.sailboat;
 import com.esaillog.cruise.Cruise;
 import com.esaillog.sailboat.dtos.CreateSailboatRequest;
 import com.esaillog.sailboat.dtos.SailboatResponse;
-import com.esaillog.sailboat.dtos.UpdateSailboatRequest;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,16 +18,13 @@ public interface SailboatMapper {
 
     Sailboat createSailboatFromDto(CreateSailboatRequest createSailboatRequest);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateSailboatFromDto(UpdateSailboatRequest updateSailboatRequest, @MappingTarget Sailboat sailboat);
-
     default Set<UUID> cruisesToIds(Set<Cruise> cruises) {
         if (cruises == null) {
             return Set.of();
         }
         return cruises.stream()
-                .map(Cruise::getId)
-                .collect(Collectors.toSet());
+                      .map(Cruise::getId)
+                      .collect(Collectors.toSet());
     }
 
 }

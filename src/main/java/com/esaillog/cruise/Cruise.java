@@ -1,5 +1,7 @@
 package com.esaillog.cruise;
 
+import com.esaillog.common.ReferenceMapper;
+import com.esaillog.cruise.dtos.UpdateCruiseRequest;
 import com.esaillog.port.Port;
 import com.esaillog.sailboat.Sailboat;
 import com.esaillog.sailor.Sailor;
@@ -79,6 +81,33 @@ public class Cruise implements Persistable<UUID> {
         this.id = UUID.randomUUID();
         updateName(name);
         setSailboat(sailboat);
+    }
+
+    /**
+     * Updates the cruise's details from a data transfer object.
+     * This method selectively updates fields that are provided (not null).
+     * It uses a ReferenceMapper to resolve IDs from the DTO into entity references.
+     *
+     * @param request The DTO containing new data for the cruise.
+     * @param mapper  The mapper to resolve entity references from IDs.
+     */
+    public void update(UpdateCruiseRequest request, ReferenceMapper mapper) {
+        if (StringUtils.hasText(request.name())) {
+            this.updateName(request.name());
+        }
+        if (request.skipperId() != null) {
+            this.setSkipper(mapper.toSailor(request.skipperId()));
+        }
+        if (request.sailboatId() != null) {
+            this.setSailboat(mapper.toSailboat(request.sailboatId()));
+        }
+        if (request.startPortId() != null || request.endPortId() != null) {
+            Port newStartPort = (request.startPortId() != null) ? mapper.toPort(request.startPortId()) : this.startPort;
+            Port newEndPort = (request.endPortId() != null) ? mapper.toPort(request.endPortId()) : this.endPort;
+            this.setStartAndEndPorts(newStartPort, newEndPort);
+        }
+        // Note: Updating collections like participants and visitedPorts is often handled via dedicated endpoints (e.g., POST
+        // /cruises/{id}/participants)
     }
 
     /**
@@ -236,6 +265,7 @@ public class Cruise implements Persistable<UUID> {
     /**
      * Returns a string representation of the cruise, including its name, participants, visited ports,
      * sailboat, skipper, and audit dates.
+     *
      * @return A string summary of the cruise.
      */
     @Override

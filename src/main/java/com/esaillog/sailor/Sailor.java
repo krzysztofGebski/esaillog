@@ -1,6 +1,7 @@
 package com.esaillog.sailor;
 
 import com.esaillog.cruise.Cruise;
+import com.esaillog.sailor.dtos.UpdateSailorRequest;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.persistence.*;
@@ -90,6 +91,25 @@ public class Sailor implements Persistable<UUID> {
      */
     public Set<Cruise> getSkipperedCruises() {
         return Collections.unmodifiableSet(skipperedCruises);
+    }
+
+    /**
+     * Updates the sailor's details from a data transfer object.
+     * It selectively updates fields that are provided (not null or blank).
+     * This method centralizes the update logic and ensures validation rules are applied.
+     *
+     * @param request The DTO containing new data for the sailor.
+     */
+    public void update(UpdateSailorRequest request) {
+        if (StringUtils.hasText(request.firstName())) {
+            this.firstName = request.firstName();
+        }
+        if (StringUtils.hasText(request.lastName())) {
+            this.lastName = request.lastName();
+        }
+        if (StringUtils.hasText(request.email())) {
+            this.changeEmail(request.email());
+        }
     }
 
     /**
