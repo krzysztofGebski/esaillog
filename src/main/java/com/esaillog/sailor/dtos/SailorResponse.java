@@ -1,5 +1,6 @@
 package com.esaillog.sailor.dtos;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +11,6 @@ public record SailorResponse(
         String email,
         Set<UUID> cruisesIds,
         Set<UUID> skipperedCruisesIds,
-        String updatedAt
+        Instant updatedAt
 ) {
 }

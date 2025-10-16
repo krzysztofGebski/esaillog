@@ -65,7 +65,7 @@ public class Sailboat implements Persistable<UUID> {
      * @param name           The name of the sailboat.
      * @param registerNumber The official registration number of the sailboat.
      * @param type           The type of the sailboat (e.g., Sloop, Ketch).
-     * @param lengthInFeet   The length of the sailboat in feet.
+     * @param lengthInFeet   The lengthInFeet of the sailboat in feet.
      * @param engineKW       The power of the sailboat's engine in kilowatts.
      */
     public Sailboat(String name, String registerNumber, SailboatType type, double lengthInFeet, double engineKW) {
@@ -93,7 +93,7 @@ public class Sailboat implements Persistable<UUID> {
      *
      * @param name           The new name for the sailboat. Cannot be null or blank.
      * @param registerNumber The new registration number. Cannot be null or blank.
-     * @param lengthInFeet   The new length in feet. Cannot be negative.
+     * @param lengthInFeet   The new lengthInFeet in feet. Cannot be negative.
      * @param engineKW       The new engine power in kilowatts. Cannot be negative.
      * @throws IllegalArgumentException if any of the parameters are invalid.
      */
@@ -166,7 +166,7 @@ public class Sailboat implements Persistable<UUID> {
         String formattedUpdatedAt = (updatedAt != null) ? DATE_TIME_FORMATTER.format(updatedAt) : "null";
 
         return "Sailboat{" + "id=" + id + ", name='" + name + '\'' + ", registerNumber='" + registerNumber + '\'' + ", type='" + type + '\''
-                + ", length=" + lengthInFeet + ", engineKW=" + engineKW + ", cruises=" + formatCruiseNames(cruises) + ", createdAt="
+                + ", lengthInFeet=" + lengthInFeet + ", engineKW=" + engineKW + ", cruises=" + formatCruiseNames(cruises) + ", createdAt="
                 + formattedCreatedAt + ", updatedAt=" + formattedUpdatedAt + '}';
     }
 

@@ -18,23 +18,17 @@ import com.esaillog.port.dtos.PortResponse;
 import com.esaillog.port.dtos.UpdatePortRequest;
 import com.esaillog.sailboat.Sailboat;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PortMapper {
  
     @Mapping( source = "sailboats", target = "sailboatsIds", qualifiedByName = "sailboatsToIds")
     @Mapping( source = "cruises", target = "cruisesIds", qualifiedByName = "cruisesToIds")
-    @Mapping( source = "updatedAt", target = "updatedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     PortResponse toPortDto(Port port);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "sailboats", ignore = true)
-    @Mapping(target = "cruises", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     Port createPortFromDto(CreatePortRequest createPortRequest);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-    Port updatePortFromDto(UpdatePortRequest updatePortRequest, @MappingTarget Port port);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updatePortFromDto(UpdatePortRequest updatePortRequest, @MappingTarget Port port);
 
     @Named("sailboatsToIds")
     default Set<UUID> sailboatsToIds(Set<Sailboat> sailboats) {

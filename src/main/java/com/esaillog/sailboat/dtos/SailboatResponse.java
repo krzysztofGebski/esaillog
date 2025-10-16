@@ -1,5 +1,6 @@
 package com.esaillog.sailboat.dtos;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,9 +11,9 @@ public record SailboatResponse(
         String name,
         String registerNumber,
         SailboatType type,
-        UUID homePortId,
-        Double length,
+        Double lengthInFeet,
         Double engineKW,
-        Set<UUID> cruiseIds
+        Set<UUID> cruiseIds,
+        Instant updatedAt
 ) {
 }

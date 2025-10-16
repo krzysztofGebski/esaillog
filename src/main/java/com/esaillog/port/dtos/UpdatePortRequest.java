@@ -1,9 +1,9 @@
 package com.esaillog.port.dtos;
 
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
 
 public record UpdatePortRequest(
-        @Pattern(regexp = ".*\\S.*", message = "The field must not be blank or contain only whitespace.")
-        String name,
-        String description) {
+        @NotBlank(message = "Name cannot be blank") String name,
+        String description
+) {
 }

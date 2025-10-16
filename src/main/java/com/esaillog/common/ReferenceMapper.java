@@ -1,5 +1,6 @@
 package com.esaillog.common;
 
+import com.esaillog.error.EntityNotFoundException;
 import com.esaillog.port.Port;
 import com.esaillog.port.PortRepository;
 import com.esaillog.sailboat.Sailboat;
@@ -35,10 +36,16 @@ public class ReferenceMapper {
     }
 
     public Sailboat toSailboat(UUID sailboatId) {
-        return sailboatRepository.findById(sailboatId).orElse(null);
+        if (sailboatId == null) {
+            return null;
+        }
+        return sailboatRepository.findById(sailboatId).orElseThrow(() -> new EntityNotFoundException("Sailboat with id " + sailboatId + " not found."));
     }
 
     public Sailor toSailor(UUID sailorId) {
-        return sailorRepository.findById(sailorId).orElse(null);
+        if (sailorId == null) {
+            return null;
+        }
+        return sailorRepository.findById(sailorId).orElseThrow(() -> new EntityNotFoundException("Sailor with id " + sailorId + " not found."));
     }
 }

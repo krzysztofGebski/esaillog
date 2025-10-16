@@ -1,5 +1,6 @@
 package com.esaillog.cruise.dtos;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,6 +13,6 @@ public record CruiseResponse(
         Set<UUID> visitedPortsIds,
         UUID sailboatId,
         UUID skipperId,
-        String updatedAt
+        Instant updatedAt
 ) {
 }

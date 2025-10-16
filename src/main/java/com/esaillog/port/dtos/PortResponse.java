@@ -1,5 +1,6 @@
 package com.esaillog.port.dtos;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -9,7 +10,7 @@ public record PortResponse(
         String description,
         Set<UUID> sailboatsIds,
         Set<UUID> cruisesIds,
-        String updatedAt
+        Instant updatedAt
 ) {
 }
 

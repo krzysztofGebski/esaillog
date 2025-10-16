@@ -1,11 +1,11 @@
 package com.esaillog.sailor.dtos;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
 
 public record UpdateSailorRequest(
-        @Pattern(regexp = ".*\\S.*", message = "The field must not be blank or contain only whitespace.") String firstName,
-        @Pattern(regexp = ".*\\S.*", message = "The field must not be blank or contain only whitespace.") String lastName,
+        @NotBlank(message = "First name cannot be blank") String firstName,
+        @NotBlank(message = "Last name cannot be blank") String lastName,
         @Email(message = "Email should be valid") String email
 ) {
 }

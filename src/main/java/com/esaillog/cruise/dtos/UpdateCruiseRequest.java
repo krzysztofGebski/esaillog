@@ -1,24 +1,18 @@
 package com.esaillog.cruise.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Set;
 import java.util.UUID;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 public record UpdateCruiseRequest(
-        UUID id,
-        @NotBlank(message = "Name cannot be blank")
-        String name,
+        @NotBlank(message = "Name cannot be blank") String name,
         Set<UUID> participantsIds,
-        @NotBlank(message = "Start port ID cannot be blank")
         UUID startPortId,
-        @NotBlank(message = "End port ID cannot be blank")
         UUID endPortId,
         Set<UUID> visitedPortsIds,
-        @NotBlank(message = "Sailboat ID cannot be blank")
         UUID sailboatId,
-        @NotNull(message = "Skipper ID cannot be null")
-        UUID skipperId) {
+        UUID skipperId
+) {
 
 }
