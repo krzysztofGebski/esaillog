@@ -14,15 +14,30 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Mapper for the Cruise entity.
+ */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = ReferenceMapper.class)
 public interface CruiseMapper {
 
+    /**
+     * Maps a Cruise entity to a CruiseResponse DTO.
+     *
+     * @param cruise The Cruise entity to map.
+     * @return The mapped CruiseResponse DTO.
+     */
     @Mapping(source = "participants", target = "participantsIds", qualifiedByName = "sailorsToIds")
     @Mapping(source = "visitedPorts", target = "visitedPortsIds", qualifiedByName = "portsToIds")
     @Mapping(source = "sailboat.id", target = "sailboatId")
     @Mapping(source = "skipper.id", target = "skipperId")
     CruiseResponse toCruiseDto(Cruise cruise);
 
+    /**
+     * Maps a CreateCruiseRequest DTO to a Cruise entity.
+     *
+     * @param createCruiseRequest The CreateCruiseRequest DTO to map.
+     * @return The mapped Cruise entity.
+     */
     @Mapping(source = "participantsIds", target = "participants")
     @Mapping(source = "visitedPortsIds", target = "visitedPorts")
     @Mapping(source = "sailboatId", target = "sailboat")
@@ -30,6 +45,12 @@ public interface CruiseMapper {
     Cruise createCruiseFromDto(CreateCruiseRequest createCruiseRequest);
 
 
+    /**
+     * Converts a set of Sailor objects to a set of their UUIDs.
+     *
+     * @param sailors The set of Sailor objects.
+     * @return A set of UUIDs.
+     */
     @Named("sailorsToIds")
     default Set<UUID> sailorsToIds(Set<Sailor> sailors) {
         if (sailors == null) {
@@ -40,6 +61,12 @@ public interface CruiseMapper {
                       .collect(Collectors.toSet());
     }
 
+    /**
+     * Converts a set of Port objects to a set of their UUIDs.
+     *
+     * @param ports The set of Port objects.
+     * @return A set of UUIDs.
+     */
     @Named("portsToIds")
     default Set<UUID> portsToIds(Set<Port> ports) {
         if (ports == null) {

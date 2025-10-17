@@ -1,10 +1,9 @@
 package com.esaillog.port;
 
-import com.esaillog.error.EntityNotFoundException;
+import com.esaillog.error.ResourceNotFoundException;
 import com.esaillog.port.dtos.CreatePortRequest;
 import com.esaillog.port.dtos.PortResponse;
 import com.esaillog.port.dtos.UpdatePortRequest;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,7 @@ public class PortService {
 
     public PortResponse findById(UUID id) {
         Port port = portRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Port", "id", id));
         return portMapper.toPortDto(port);
     }
 
@@ -39,7 +38,7 @@ public class PortService {
     @Transactional
     public PortResponse update(UUID id, UpdatePortRequest updatePortRequest) {
         Port existingPort = portRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Port not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Port", "id", id));
 
         existingPort.update(updatePortRequest);
 

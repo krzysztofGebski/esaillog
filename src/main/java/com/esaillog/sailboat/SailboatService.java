@@ -1,6 +1,6 @@
 package com.esaillog.sailboat;
 
-import com.esaillog.error.EntityNotFoundException;
+import com.esaillog.error.ResourceNotFoundException;
 import com.esaillog.sailboat.dtos.CreateSailboatRequest;
 import com.esaillog.sailboat.dtos.SailboatResponse;
 import com.esaillog.sailboat.dtos.UpdateSailboatRequest;
@@ -28,7 +28,7 @@ public class SailboatService {
 
     public SailboatResponse findById(UUID id) {
         Sailboat sailboat = sailboatRepository.findById(id)
-                                              .orElseThrow(() -> new EntityNotFoundException("Sailboat not found with id: " + id));
+                                              .orElseThrow(() -> new ResourceNotFoundException("Sailboat", "id", id));
         return sailboatMapper.toSailboatDto(sailboat);
     }
 
@@ -42,7 +42,7 @@ public class SailboatService {
     @Transactional
     public SailboatResponse update(UUID id, UpdateSailboatRequest updateSailboatRequest) {
         Sailboat sailboatToUpdate = sailboatRepository.findById(id)
-                                                      .orElseThrow(() -> new EntityNotFoundException("Sailboat not found with id: " + id));
+                                                      .orElseThrow(() -> new ResourceNotFoundException("Sailboat", "id", id));
 
         sailboatToUpdate.update(updateSailboatRequest);
 

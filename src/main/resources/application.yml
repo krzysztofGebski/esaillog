@@ -1,3 +1,6 @@
 spring:
   application:
     name: esaillog
+server:
+  servlet:
+    context-path: /api

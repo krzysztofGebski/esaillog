@@ -20,6 +20,11 @@ public class DataInitializer implements CommandLineRunner {
     private final CruiseRepository cruiseRepository;
 
 
+    /**
+     * Initializes the database with sample data.
+     *
+     * @param args incoming main method arguments
+     */
     @Override
     public void run(String... args) {
         Sailor firstSailor = new Sailor("Krzysztof", "Gębski", "krzysztof.gebski@mail.com");
