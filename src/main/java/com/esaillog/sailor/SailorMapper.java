@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SailorMapper {
 
-    @Mapping(source = "cruises", target = "cruisesIds")
-    @Mapping(source = "skipperedCruises", target = "skipperedCruisesIds")
+    @Mapping(source = "cruises", target = "cruiseIds")
+    @Mapping(source = "skipperedCruises", target = "skipperedCruiseIds")
     SailorResponse toSailorDto(Sailor sailor);
 
     Sailor createSailorFromDto(CreateSailorRequest createSailorRequest);

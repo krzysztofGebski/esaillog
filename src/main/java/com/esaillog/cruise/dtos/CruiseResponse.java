@@ -7,10 +7,10 @@ import java.util.UUID;
 public record CruiseResponse(
         UUID id,
         String name,
-        Set<UUID> participantsIds,
+        Set<UUID> participantIds,
         UUID startPortId,
         UUID endPortId,
-        Set<UUID> visitedPortsIds,
+        Set<UUID> visitedPortIds,
         UUID sailboatId,
         UUID skipperId,
         Instant updatedAt

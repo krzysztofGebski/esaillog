@@ -8,7 +8,7 @@ public record PortResponse(
         UUID id,
         String name,
         String description,
-        Set<UUID> cruisesIds,
+        Set<UUID> cruiseIds,
         Instant updatedAt
 ) {
 }

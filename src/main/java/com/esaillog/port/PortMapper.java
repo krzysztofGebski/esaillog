@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public interface PortMapper {
 
     @Mapping(source = "sailboats", target = "sailboatsIds", qualifiedByName = "sailboatsToIds")
-    @Mapping(source = "cruises", target = "cruisesIds", qualifiedByName = "cruisesToIds")
+    @Mapping(source = "cruises", target = "cruiseIds", qualifiedByName = "cruisesToIds")
     PortResponse toPortDto(Port port);
 
     Port createPortFromDto(CreatePortRequest createPortRequest);

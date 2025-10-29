@@ -26,8 +26,8 @@ public interface CruiseMapper {
      * @param cruise The Cruise entity to map.
      * @return The mapped CruiseResponse DTO.
      */
-    @Mapping(source = "participants", target = "participantsIds", qualifiedByName = "sailorsToIds")
-    @Mapping(source = "visitedPorts", target = "visitedPortsIds", qualifiedByName = "portsToIds")
+    @Mapping(source = "participants", target = "participantIds", qualifiedByName = "sailorsToIds")
+    @Mapping(source = "visitedPorts", target = "visitedPortIds", qualifiedByName = "portsToIds")
     @Mapping(source = "sailboat.id", target = "sailboatId")
     @Mapping(source = "skipper.id", target = "skipperId")
     CruiseResponse toCruiseDto(Cruise cruise);
@@ -38,8 +38,8 @@ public interface CruiseMapper {
      * @param createCruiseRequest The CreateCruiseRequest DTO to map.
      * @return The mapped Cruise entity.
      */
-    @Mapping(source = "participantsIds", target = "participants")
-    @Mapping(source = "visitedPortsIds", target = "visitedPorts")
+    @Mapping(source = "participantIds", target = "participants")
+    @Mapping(source = "visitedPortIds", target = "visitedPorts")
     @Mapping(source = "sailboatId", target = "sailboat")
     @Mapping(source = "skipperId", target = "skipper")
     Cruise createCruiseFromDto(CreateCruiseRequest createCruiseRequest);

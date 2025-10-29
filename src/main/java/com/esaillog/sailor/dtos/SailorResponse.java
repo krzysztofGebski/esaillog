@@ -9,8 +9,8 @@ public record SailorResponse(
         String firstName,
         String lastName,
         String email,
-        Set<UUID> cruisesIds,
-        Set<UUID> skipperedCruisesIds,
+        Set<UUID> cruiseIds,
+        Set<UUID> skipperedCruiseIds,
         Instant updatedAt
 ) {
 }
